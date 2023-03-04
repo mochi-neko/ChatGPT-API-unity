@@ -1,0 +1,21 @@
+#nullable enable
+using System.Collections.Generic;
+
+namespace Mochineko.ChatGPT_API
+{
+    internal static class RoleResolver
+    {
+        private static readonly IReadOnlyDictionary<Role, string> Dictionary = new Dictionary<Role, string>
+        {
+            [Role.System] = "system",
+            [Role.Assistant] = "assistant",
+            [Role.User] = "user",
+        };
+
+        public static Role ToRole(this string role)
+            => Dictionary.Inverse(role);
+
+        public static string ToText(this Role role)
+            => Dictionary[role];
+    }
+}

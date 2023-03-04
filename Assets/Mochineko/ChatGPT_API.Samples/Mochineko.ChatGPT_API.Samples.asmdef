@@ -1,0 +1,17 @@
+{
+    "name": "Mochineko.ChatGPT_API.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d63d7a0555b6b4b0a9148c0dbfcd7265",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

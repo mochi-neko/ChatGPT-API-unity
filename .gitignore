@@ -73,3 +73,7 @@ crashlytics-build.properties
 
 # macOS
 .DS_Store
+
+# OpenAI API Key
+/[Aa]ssets/Mochineko/ChatGPT_API.Tests/OpenAI_API_Key.txt
+/[Aa]ssets/Mochineko/ChatGPT_API.Tests/OpenAI_API_Key.txt.meta
