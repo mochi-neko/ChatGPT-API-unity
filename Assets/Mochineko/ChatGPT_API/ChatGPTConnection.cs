@@ -18,6 +18,7 @@ namespace Mochineko.ChatGPT_API
 
         static ChatGPTConnection()
         {
+            // Pooling socket
             httpClient = new HttpClient();
         }
 
@@ -33,7 +34,7 @@ namespace Mochineko.ChatGPT_API
             this.requestBody = new APIRequestBody(model, messages);
         }
 
-        public ChatGPTConnection(string apiKey, string messageRecordsJson, Model model = Model.Turbo)
+        internal ChatGPTConnection(string apiKey, string messageRecordsJson, Model model = Model.Turbo)
         {
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -112,7 +113,7 @@ namespace Mochineko.ChatGPT_API
 
             var choice = responseBody.Choices[0];
 
-            // Record message
+            // Record result message
             messages.Add(choice.Message);
 
             return choice.Message.Content;
