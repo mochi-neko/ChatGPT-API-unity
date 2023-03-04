@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiKey: 
   systemMessage: 
-  chatContent: 
+  message: 
 --- !u!4 &617748976
 Transform:
   m_ObjectHideFlags: 0

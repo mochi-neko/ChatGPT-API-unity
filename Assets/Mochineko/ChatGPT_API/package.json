@@ -1,8 +1,8 @@
 {
   "name": "com.mochineko.chatgpt-api",
   "version": "0.1.0",
-  "displayName": "ChatGPT API",
-  "description": "ChatGPT API bindings with pure C#.",
+  "displayName": "ChatGPT chat completion API",
+  "description": "ChatGPT chat completion API bindings to pure C#.",
   "unity": "2021.3",
   "author": {
     "name": "Mochineko",
