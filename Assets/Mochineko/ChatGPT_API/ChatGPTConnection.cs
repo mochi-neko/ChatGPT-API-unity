@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Mochineko.ChatGPT_API
 {
@@ -63,14 +63,16 @@ namespace Mochineko.ChatGPT_API
             messages.Add(new Message(Role.System, content));
         }
 
-        public async UniTask<string> SendMessage(string content, CancellationToken cancellationToken)
+        public async Task<string> SendMessage(string content, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Record sending message
             messages.Add(new Message(Role.User, content));
 
             using var requestMessage = CreateRequestMessage(headers, requestBody);
 
+            // Post request and receive response
             // TODO: Implement retrying and circuit breaking?
             // May throw exceptions e.g. HttpRequestException, TaskCanceledException and so on.
             using var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken);
