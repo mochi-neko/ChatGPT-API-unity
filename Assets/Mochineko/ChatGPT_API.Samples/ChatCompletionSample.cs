@@ -20,8 +20,11 @@ namespace Mochineko.ChatGPT_API.Samples
             Assert.IsNotNull(apiKey);
             
             connection = new ChatGPTConnection(apiKey, Model.Turbo);
-            
-            connection.AddSystemMessage(systemMessage);
+
+            if (!string.IsNullOrEmpty(systemMessage))
+            {
+                connection.AddSystemMessage(systemMessage);
+            }
         }
 
         [ContextMenu(nameof(SendChat))]
@@ -30,6 +33,12 @@ namespace Mochineko.ChatGPT_API.Samples
             if (connection == null)
             {
                 Debug.LogError($"[ChatGPT_API.Samples] Connection is null.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(chatContent))
+            {
+                Debug.LogError($"[ChatGPT_API.Samples] Chat content is empty.");
                 return;
             }
             
