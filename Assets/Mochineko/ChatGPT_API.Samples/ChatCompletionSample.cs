@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using Cysharp.Threading.Tasks;
+using Mochineko.ChatGPT_API.Formats;
 using UnityEngine;
 using UnityEngine.Assertions;
 

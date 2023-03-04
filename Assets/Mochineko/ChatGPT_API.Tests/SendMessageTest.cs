@@ -2,6 +2,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mochineko.ChatGPT_API.Formats;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;

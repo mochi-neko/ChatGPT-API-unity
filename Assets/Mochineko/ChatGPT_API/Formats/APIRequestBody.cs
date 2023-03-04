@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Mochineko.ChatGPT_API
+namespace Mochineko.ChatGPT_API.Formats
 {
     [JsonObject]
     internal sealed class APIRequestBody

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Mochineko.ChatGPT_API.Formats;
 
 namespace Mochineko.ChatGPT_API
 {
@@ -21,7 +22,7 @@ namespace Mochineko.ChatGPT_API
             // Pooling socket
             httpClient = new HttpClient();
         }
-
+        
         public ChatGPTConnection(string apiKey, Model model = Model.Turbo)
         {
             if (string.IsNullOrEmpty(apiKey))
@@ -63,6 +64,7 @@ namespace Mochineko.ChatGPT_API
             messages.Add(new Message(Role.System, content));
         }
 
+        // TODO: Make response type
         public async Task<string> SendMessage(string content, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using Mochineko.ChatGPT_API.Formats;
 
 namespace Mochineko.ChatGPT_API
 {

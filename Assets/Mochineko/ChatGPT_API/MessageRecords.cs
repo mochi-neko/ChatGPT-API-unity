@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using Mochineko.ChatGPT_API.Formats;
 using Newtonsoft.Json;
 
 namespace Mochineko.ChatGPT_API

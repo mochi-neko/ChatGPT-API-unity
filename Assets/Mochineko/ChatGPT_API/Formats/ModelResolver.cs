@@ -1,7 +1,7 @@
 #nullable enable
 using System.Collections.Generic;
 
-namespace Mochineko.ChatGPT_API
+namespace Mochineko.ChatGPT_API.Formats
 {
     internal static class ModelResolver
     {
