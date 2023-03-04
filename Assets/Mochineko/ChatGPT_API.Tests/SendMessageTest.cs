@@ -27,7 +27,7 @@ namespace Mochineko.ChatGPT_API.Tests
 
             var connection = new ChatGPTConnection(apiKey, Model.Turbo0301);
 
-            var result = await connection.SendMessage(message, CancellationToken.None);
+            var result = await connection.CreateMessageAsync(message, CancellationToken.None);
 
             string.IsNullOrEmpty(result.ResultMessage).Should().BeFalse();
             
