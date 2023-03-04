@@ -33,7 +33,7 @@ namespace Mochineko.ChatGPT_API.Samples
                 return;
             }
             
-            string result;
+            APIResponseBody result;
             try
             {
                 result = await connection
@@ -45,7 +45,7 @@ namespace Mochineko.ChatGPT_API.Samples
                 return;
             }
             
-            Debug.Log($"[ChatGPT_API.Samples] Result:\n{result}");
+            Debug.Log($"[ChatGPT_API.Samples] Result:\n{result.ResultMessage}");
         }
     }
 }

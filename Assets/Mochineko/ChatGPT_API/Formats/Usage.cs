@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Mochineko.ChatGPT_API.Formats
 {
     [JsonObject]
-    internal sealed class Usage
+    public sealed class Usage
     {
         [JsonProperty("prompt_tokens")] public uint PromptTokens { get; }
         [JsonProperty("completion_tokens")] public uint CompletionTokens { get; }

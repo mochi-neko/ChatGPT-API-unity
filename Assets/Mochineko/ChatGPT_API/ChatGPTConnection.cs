@@ -22,7 +22,7 @@ namespace Mochineko.ChatGPT_API
             // Pooling socket
             httpClient = new HttpClient();
         }
-        
+
         public ChatGPTConnection(string apiKey, Model model = Model.Turbo)
         {
             if (string.IsNullOrEmpty(apiKey))
@@ -65,7 +65,7 @@ namespace Mochineko.ChatGPT_API
         }
 
         // TODO: Make response type
-        public async Task<string> SendMessage(string content, CancellationToken cancellationToken)
+        public async Task<APIResponseBody> SendMessage(string content, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -115,12 +115,10 @@ namespace Mochineko.ChatGPT_API
                 throw new Exception($"[ChatGPT_API] Not found any choices in response body.");
             }
 
-            var choice = responseBody.Choices[0];
-
             // Record result message
-            messages.Add(choice.Message);
+            messages.Add(responseBody.Choices[0].Message);
 
-            return choice.Message.Content;
+            return responseBody;
         }
 
         public string ExportMessages()

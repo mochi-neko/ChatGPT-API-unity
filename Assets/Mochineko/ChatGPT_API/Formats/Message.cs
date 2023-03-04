@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Mochineko.ChatGPT_API.Formats
 {
     [JsonObject]
-    internal sealed class Message
+    public sealed class Message
     {
         [JsonProperty("role")] public string Role { get; private set; }
         [JsonProperty("content")] public string Content { get; private set; }
@@ -16,7 +16,7 @@ namespace Mochineko.ChatGPT_API.Formats
             this.Content = string.Empty;
         }
 
-        public Message(Role role, string content)
+        internal Message(Role role, string content)
         {
             if (string.IsNullOrEmpty(content))
             {

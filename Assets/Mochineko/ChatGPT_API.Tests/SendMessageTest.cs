@@ -29,7 +29,7 @@ namespace Mochineko.ChatGPT_API.Tests
 
             var result = await connection.SendMessage(message, CancellationToken.None);
 
-            string.IsNullOrEmpty(result).Should().BeFalse();
+            string.IsNullOrEmpty(result.ResultMessage).Should().BeFalse();
             
             Debug.Log($"Result:\n{result}");
         }
