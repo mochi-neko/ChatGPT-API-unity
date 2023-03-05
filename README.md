@@ -1,8 +1,6 @@
 # ChatGPT-API-unity
 
-Binds [ChatGPT chat completion API](https://platform.openai.com/docs/guides/chat) to pure C#.
-
-See [Document](https://platform.openai.com/docs/guides/chat).
+Binds [ChatGPT chat completion API](https://platform.openai.com/docs/guides/chat) to pure C# on Unity.
 
 
 ## How to import by UnityPackageManager
@@ -21,9 +19,15 @@ Add dependencies:
 
 to your `mainfest.json`.
 
-If you have already used NewtonSoft Json on your project, remove `"com.unity.nuget.newtonsoft-json": "3.0.2",`.
+If you have already used NewtonSoft.Json on your project, remove dependency:`"com.unity.nuget.newtonsoft-json": "3.0.2",`.
 
 ## How to use chat completion by ChatGPT API
+
+1. Generate API key on OpenAI and set. (Take care your API key, this is a seclet information then you should not open.)
+2. Specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are avairable.)
+3. Input system message to instruct assistant with your situation.
+4. Input user message and call `ChatGPTConnection.CreateMessageAsync(...)`.
+5. Response message is in `APIResponseBody.ResultMessage` (= `APIResponseBody.Choices[0].Message.Content`).
 
 An essensial sample code with [UniTask](https://github.com/Cysharp/UniTask) is as follows:
 
@@ -34,7 +38,6 @@ using Cysharp.Threading.Tasks;
 using Mochineko.ChatGPT_API;
 using Mochineko.ChatGPT_API.Formats;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace XXX
 {
@@ -93,12 +96,12 @@ namespace XXX
 }
 ```
 
-See [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
+See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
 
 
 ## 3rd Party Notices
 
-[NOTICE](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/NOTICE.md)
+See [NOTICE](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/NOTICE.md).
 
 ## Lisence
 
