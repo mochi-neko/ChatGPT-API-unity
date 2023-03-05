@@ -26,7 +26,7 @@ If you have already used NewtonSoft.Json on your project, remove dependency:`"co
 1. Generate API key on OpenAI and set. (Take care your API key, this is a seclet information then you should not open.)
 2. Specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are avairable.)
 3. Create an instance of `ChatGPTConnection` with API key and chat model. (This instance memorizes old messages in session.)
-4. You can set system message to instruct assistant with your situation by `ChatGPTConnection.AddSystemMessage`.
+4. You can set system message (prompt) to instruct assistant with your situation by `ChatGPTConnection.AddSystemMessage`.
 5. Input user message and call `ChatGPTConnection.CreateMessageAsync`.
 6. Response message is in `APIResponseBody.ResultMessage` (= `APIResponseBody.Choices[0].Message.Content`).
 
