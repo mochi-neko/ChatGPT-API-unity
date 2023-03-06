@@ -84,7 +84,7 @@ namespace Mochineko.ChatGPT_API
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
         /// <exception cref="Exception">System exceptions</exception>
-        /// <exception cref="ChatGPTAPIException">API error response</exception>
+        /// <exception cref="APIErrorException">API error response</exception>
         /// <exception cref="HttpRequestException">Network error</exception>
         /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
         /// <exception cref="JsonSerializationException">JSON error</exception>
@@ -129,16 +129,23 @@ namespace Mochineko.ChatGPT_API
 
                 return responseBody;
             }
-            else
+            else if (IsAPIError(responseMessage.StatusCode))
             {
                 var errorResponseBody = APIErrorResponseBody.FromJson(responseJson);
                 if (errorResponseBody != null)
                 {
                     // Handle API error response
-                    throw new ChatGPTAPIException(errorResponseBody);
+                    throw new APIErrorException(responseMessage.StatusCode, errorResponseBody);
                 }
 
-                throw new Exception($"[ChatGPT_API] Error response body is null.");
+                throw new Exception($"[ChatGPT_API] Error response body is null with status code:{responseMessage.StatusCode}.");
+            }
+            else // Another error, e.g. 5XX errors.
+            {
+                // Throws HttpRequestException
+                responseMessage.EnsureSuccessStatusCode();
+
+                throw new Exception($"[ChatGPT_API] It should not be be reached with status code:{responseMessage.StatusCode}.");
             }
         }
 
@@ -174,5 +181,8 @@ namespace Mochineko.ChatGPT_API
 
             return requestMessage;
         }
+
+        private static bool IsAPIError(HttpStatusCode statusCode)
+            => 400 <= (int)statusCode && (int)statusCode <= 499;
     }
 }

@@ -72,7 +72,7 @@ namespace Mochineko.ChatGPT_API.Tests
 
         [Test]
         [RequiresPlayMode(false)]
-        public async Task Error()
+        public async Task TooLongMaxTokens()
         {
             // This file is a target of .gitignore.
             var apiKeyPath = Path.Combine(
@@ -98,8 +98,35 @@ namespace Mochineko.ChatGPT_API.Tests
             var connection = new ChatGPTConnection(apiKey, requestBody);
 
             Func<Task> send = async () => await connection.CreateMessageAsync("a", CancellationToken.None);
-            
-            await send.Should().ThrowAsync<ChatGPTAPIException>(because: "max_tokens is too long.");
+
+            await send.Should().ThrowAsync<APIErrorException>(because: "max_tokens is too long.");
+        }
+
+        [Test]
+        [RequiresPlayMode(false)]
+        public async Task InvalidAPIKey()
+        {
+            var apiKey = "invalid";
+
+            var requestBody = new APIRequestBody(
+                model: Model.Turbo.ToText(),
+                messages: new List<Message>(),
+                temperature: 1f,
+                topP: 1f,
+                n: 1,
+                stream: false,
+                stop: null,
+                maxTokens: int.MaxValue, // Over 4096 tokens
+                presencePenalty: 0f,
+                frequencyPenalty: 0f,
+                user: "test"
+            );
+
+            var connection = new ChatGPTConnection(apiKey, requestBody);
+
+            Func<Task> send = async () => await connection.CreateMessageAsync("a", CancellationToken.None);
+
+            await send.Should().ThrowAsync<APIErrorException>(because: "Invalid API key.");
         }
     }
 }

@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 namespace Mochineko.ChatGPT_API.Formats
 {
     /// <summary>
-    /// https://platform.openai.com/docs/api-reference/chat/create
+    /// Request body of ChatGPT chat completion API.
+    /// See https://platform.openai.com/docs/api-reference/chat/create
     /// </summary>
     [JsonObject]
     public sealed class APIRequestBody
