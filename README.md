@@ -100,6 +100,10 @@ namespace XXX
 See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
 
 
+## Changelog
+
+See [CHANGELOG](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/CHANGELOG.md)
+
 ## 3rd Party Notices
 
 See [NOTICE](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/NOTICE.md).
