@@ -11,7 +11,7 @@ Add dependencies:
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.1.0",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.1.",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     ...
   }
