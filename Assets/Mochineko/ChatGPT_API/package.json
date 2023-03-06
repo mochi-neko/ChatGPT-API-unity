@@ -1,6 +1,6 @@
 {
   "name": "com.mochineko.chatgpt-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "ChatGPT chat completion API",
   "description": "ChatGPT chat completion API bindings to pure C#.",
   "unity": "2021.3",

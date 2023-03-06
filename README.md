@@ -1,7 +1,8 @@
 # ChatGPT-API-unity
 
-Binds [ChatGPT chat completion API](https://platform.openai.com/docs/guides/chat) to pure C# on Unity.
+Binds [ChatGPT chat completion API](https://platform.openai.com/docs/api-reference/chat/create) to pure C# on Unity.
 
+See also [official document](https://platform.openai.com/docs/guides/chat).
 
 ## How to import by UnityPackageManager
 
@@ -23,7 +24,7 @@ If you have already used Newtonsoft.Json on your project, remove dependency:`"co
 
 ## How to use chat completion by ChatGPT API
 
-1. Generate API key on [OpenAI](https://platform.openai.com/). (Take care your API key, this is a secret information then you should not open.)
+1. Generate API key on [OpenAI](https://platform.openai.com/account/api-keys). (Take care your API key, this is a secret information then you should not open.)
 2. You can specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are available.)
 3. Create an instance of `ChatGPTConnection` with API key and chat model. (This instance memorizes old messages in session.)
 4. You can set system message (prompt) to instruct assistant with your situation by `ChatGPTConnection.AddSystemMessage`.
