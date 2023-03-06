@@ -19,18 +19,18 @@ Add dependencies:
 
 to your `mainfest.json`.
 
-If you have already used NewtonSoft.Json on your project, remove dependency:`"com.unity.nuget.newtonsoft-json": "3.0.2",`.
+If you have already used Newtonsoft.Json on your project, remove dependency:`"com.unity.nuget.newtonsoft-json": "3.0.2",`.
 
 ## How to use chat completion by ChatGPT API
 
-1. Generate API key on OpenAI and set. (Take care your API key, this is a seclet information then you should not open.)
-2. Specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are avairable.)
+1. Generate API key on [OpenAI](https://platform.openai.com/). (Take care your API key, this is a secret information then you should not open.)
+2. You can specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are available.)
 3. Create an instance of `ChatGPTConnection` with API key and chat model. (This instance memorizes old messages in session.)
 4. You can set system message (prompt) to instruct assistant with your situation by `ChatGPTConnection.AddSystemMessage`.
 5. Input user message and call `ChatGPTConnection.CreateMessageAsync`.
 6. Response message is in `APIResponseBody.ResultMessage` (= `APIResponseBody.Choices[0].Message.Content`).
 
-An essensial sample code with [UniTask](https://github.com/Cysharp/UniTask) is as follows:
+An essential sample code with [UniTask](https://github.com/Cysharp/UniTask) is as follows:
 
 ```cs
 #nullable enable
@@ -63,8 +63,8 @@ namespace XXX
         
         private void Start()
         {
-            // Create instance of ChatGPTConnection with specifying chat model.
-            connection = new ChatGPTConnection(apiKey, Model.Turbo);
+            // Create instance of ChatGPTConnection.
+            connection = new ChatGPTConnection(apiKey);
 
             if (!string.IsNullOrEmpty(systemMessage))
             {
@@ -104,6 +104,6 @@ See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Asse
 
 See [NOTICE](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/NOTICE.md).
 
-## Lisence
+## License
 
 [MIT License](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/LICENSE)
