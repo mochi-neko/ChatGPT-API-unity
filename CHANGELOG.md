@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Change arguments of completion method.
+- Change name and arguments of completion method.
 
 ### Fixed
 
