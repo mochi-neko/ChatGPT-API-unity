@@ -14,6 +14,13 @@
       "dependencies": {},
       "hash": "73d86259ce31ce7f4dfe1d028ea1c3edf96c23e4"
     },
+    "com.mochineko.relent.resilience": {
+      "version": "https://github.com/mochi-neko/Relent.git?path=/Assets/Mochineko/Relent/Resilience#0.1.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "712857f76cf8fc29c8f7f85c913949143c6a42da"
+    },
     "com.mochineko.relent.uncertain-result": {
       "version": "https://github.com/mochi-neko/Relent.git?path=/Assets/Mochineko/Relent/UncertainResult#0.1.0",
       "depth": 0,

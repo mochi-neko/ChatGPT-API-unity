@@ -1,0 +1,26 @@
+{
+    "name": "Mochineko.ChatGPT_API.Relent.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:e372c541aba5148868e12aa078ca7c20",
+        "GUID:d63d7a0555b6b4b0a9148c0dbfcd7265",
+        "GUID:5c67e8a6c5956403bb150154fc83ee6f",
+        "GUID:2620e54ab6edb48f48d55966fd5662fb",
+        "GUID:51d11816546934d4a937e4a420478ce5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

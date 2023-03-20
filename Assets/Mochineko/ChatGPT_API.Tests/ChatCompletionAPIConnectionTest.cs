@@ -13,7 +13,7 @@ using UnityEngine.TestTools;
 namespace Mochineko.ChatGPT_API.Tests
 {
     [TestFixture]
-    internal sealed class ChatGptConnectionTest
+    internal sealed class ChatCompletionAPIConnectionTest
     {
         [TestCase("あなたのことを教えて")]
         [RequiresPlayMode(false)]
