@@ -10,6 +10,7 @@ namespace Mochineko.ChatGPT_API.Tests
     {
         [TestCase(Model.Turbo, "gpt-3.5-turbo")]
         [TestCase(Model.Turbo0301, "gpt-3.5-turbo-0301")]
+        [TestCase(Model.Four, "gpt-4")]
         [RequiresPlayMode(false)]
         public void Resolve(Model model, string modelText)
         {

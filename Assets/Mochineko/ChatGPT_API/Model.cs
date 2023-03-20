@@ -14,5 +14,9 @@ namespace Mochineko.ChatGPT_API
         /// "gpt-3.5-turbo-0301" fixed GPT3.5 turbo model at 03/01/2023.
         /// </summary>
         Turbo0301,
+        /// <summary>
+        /// "gpt-4" latest GPT4 model.
+        /// </summary>
+        Four,
     }
 }
