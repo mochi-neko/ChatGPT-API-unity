@@ -144,7 +144,7 @@ namespace Mochineko.ChatGPT_API.Samples
 
 See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
 
-## ## How to use chat completion by ChatGPT API more resilient
+## How to use chat completion by ChatGPT API more resilient
 
 See `RelentChatCompletionAPIConnection` and `RelentChatCompletionSample` using [Relent](https://github.com/mochi-neko/Relent).
 
