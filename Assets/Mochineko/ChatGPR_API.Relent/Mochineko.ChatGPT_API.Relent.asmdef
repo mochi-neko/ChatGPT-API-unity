@@ -1,0 +1,17 @@
+{
+    "name": "Mochineko.ChatGPT_API.Relent",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d63d7a0555b6b4b0a9148c0dbfcd7265",
+        "GUID:2620e54ab6edb48f48d55966fd5662fb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
