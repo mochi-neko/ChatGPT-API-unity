@@ -11,22 +11,17 @@ using UnityEngine;
 namespace Mochineko.ChatGPT_API.Relent
 {
     /// <summary>
-    /// Binds ChatGPT chat completion API using Relent.
+    /// Binds ChatGPT chat completion API with resilient error handling using Relent.
     /// </summary>
     public sealed class RelentChatCompletionAPIConnection
     {
         private readonly string apiKey;
         private readonly IChatMemory chatMemory;
 
-        private static readonly HttpClient httpClient;
         private const string ChatCompletionEndPoint = "https://api.openai.com/v1/chat/completions";
 
-        static RelentChatCompletionAPIConnection()
-        {
-            // TODO: Singleton
-            // Pooling socket
-            httpClient = new HttpClient();
-        }
+        private static HttpClient HttpClient
+            => HttpClientPool.PooledClient;
 
         /// <summary>
         /// Create an instance of ChatGPT chat completion API connection.
@@ -60,11 +55,6 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
-        /// <exception cref="Exception">System exceptions</exception>
-        /// <exception cref="APIErrorException">API error response</exception>
-        /// <exception cref="HttpRequestException">Network error</exception>
-        /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
-        /// <exception cref="JsonSerializationException">JSON error</exception>
         public async Task<IUncertainResult<ChatCompletionResponseBody>> CompleteChatAsync(
             string content,
             CancellationToken cancellationToken,
@@ -134,7 +124,8 @@ namespace Mochineko.ChatGPT_API.Relent
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
-                HttpMethod.Post, ChatCompletionEndPoint);
+                HttpMethod.Post, 
+                ChatCompletionEndPoint);
 
             // Request headers
             requestMessage
@@ -152,7 +143,8 @@ namespace Mochineko.ChatGPT_API.Relent
             try
             {
                 // Post request and receive response
-                using var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken);
+                using var responseMessage = await HttpClient
+                    .SendAsync(requestMessage, cancellationToken);
                 if (responseMessage == null)
                 {
                     return UncertainResultFactory.Fail<ChatCompletionResponseBody>(

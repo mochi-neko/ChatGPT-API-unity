@@ -18,15 +18,11 @@ namespace Mochineko.ChatGPT_API
         private readonly string apiKey;
         private readonly IChatMemory chatMemory;
 
-        private static readonly HttpClient httpClient;
         private const string ChatCompletionEndPoint = "https://api.openai.com/v1/chat/completions";
 
-        static ChatCompletionAPIConnection()
-        {
-            // Pooling socket
-            httpClient = new HttpClient();
-        }
-
+        private static HttpClient HttpClient
+            => HttpClientPool.PooledClient;
+        
         /// <summary>
         /// Create an instance of ChatGPT chat completion API connection.
         /// https://platform.openai.com/docs/api-reference/chat/create
@@ -113,7 +109,7 @@ namespace Mochineko.ChatGPT_API
             requestMessage.Content = requestContent;
 
             // Post request and receive response
-            using var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken);
+            using var responseMessage = await HttpClient.SendAsync(requestMessage, cancellationToken);
             if (responseMessage == null)
             {
                 throw new Exception($"[ChatGPT_API] HttpResponseMessage is null.");
