@@ -74,7 +74,11 @@ namespace Mochineko.ChatGPT_API.Relent.Samples
         private void Start()
         {
             // API Key must be set.
-            Assert.IsNotNull(apiKey);
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                Debug.LogError("OpenAI API key must be set.");
+                return;
+            }
 
             memory = new FiniteQueueChatMemory(maxMemoryCount);
 
@@ -114,6 +118,12 @@ namespace Mochineko.ChatGPT_API.Relent.Samples
             SendChatAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
         
+        [ContextMenu(nameof(ClearChatMemory))]
+        public void ClearChatMemory()
+        {
+            memory?.ClearAllMessages();
+        }
+        
         private async UniTask SendChatAsync(CancellationToken cancellationToken)
         {
             // Validations
@@ -146,7 +156,7 @@ namespace Mochineko.ChatGPT_API.Relent.Samples
             
             if (result is IUncertainSuccessResult<ChatCompletionResponseBody> success)
             {
-                Debug.Log($"[ChatGPT_API.Relent.Samples] Result:\n{success.Result.ToJson()}");
+                Debug.Log($"[ChatGPT_API.Relent.Samples] Result:\n{success.Result.ResultMessage}");
             }
             else if (result is IUncertainRetryableResult<ChatCompletionResponseBody> retryable)
             {

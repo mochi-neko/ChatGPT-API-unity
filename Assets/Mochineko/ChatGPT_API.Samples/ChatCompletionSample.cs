@@ -1,9 +1,9 @@
 #nullable enable
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Mochineko.ChatGPT_API.Memories;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Mochineko.ChatGPT_API.Samples
 {
@@ -27,22 +27,45 @@ namespace Mochineko.ChatGPT_API.Samples
         /// </summary>
         [SerializeField, TextArea] private string message = string.Empty;
 
+        /// <summary>
+        /// Max number of chat memory of queue.
+        /// </summary>
+        [SerializeField] private int maxMemoryCount = 20;
+
         private ChatCompletionAPIConnection? connection;
+        private IChatMemory? memory;
 
         private void Start()
         {
             // API Key must be set.
-            Assert.IsNotNull(apiKey);
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                Debug.LogError("OpenAI API key must be set.");
+                return;
+            }
+
+            memory = new FiniteQueueChatMemory(maxMemoryCount);
 
             // Create instance of ChatGPTConnection with specifying chat model.
             connection = new ChatCompletionAPIConnection(
                 apiKey,
-                new SimpleChatMemory(),
+                memory,
                 systemMessage);
         }
 
         [ContextMenu(nameof(SendChat))]
-        public async void SendChat()
+        public void SendChat()
+        {
+            SendChatAsync(this.GetCancellationTokenOnDestroy()).Forget();
+        }
+        
+        [ContextMenu(nameof(ClearChatMemory))]
+        public void ClearChatMemory()
+        {
+            memory?.ClearAllMessages();
+        }
+        
+        private async UniTask SendChatAsync(CancellationToken cancellationToken)
         {
             // Validations
             if (connection == null)
@@ -60,11 +83,12 @@ namespace Mochineko.ChatGPT_API.Samples
             ChatCompletionResponseBody response;
             try
             {
+                await UniTask.SwitchToThreadPool();
+                
                 // Create message by ChatGPT chat completion API.
                 response = await connection.CompleteChatAsync(
                         message,
-                        this.GetCancellationTokenOnDestroy(),
-                        Model.Turbo);
+                        cancellationToken);
             }
             catch (Exception e)
             {
@@ -72,6 +96,8 @@ namespace Mochineko.ChatGPT_API.Samples
                 Debug.LogException(e);
                 return;
             }
+
+            await UniTask.SwitchToMainThread(cancellationToken);
 
             // Log chat completion result.
             Debug.Log($"[ChatGPT_API.Samples] Result:\n{response.ResultMessage}");

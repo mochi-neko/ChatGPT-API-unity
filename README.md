@@ -26,23 +26,26 @@ If you have already used Newtonsoft.Json on your project, remove dependency:`"co
 
 1. Generate API key on [OpenAI](https://platform.openai.com/account/api-keys). (Take care your API key, this is a secret information then you should not open.)
 2. You can specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are available.)
-3. Create an instance of `ChatGPTConnection` with API key and chat model. (This instance memorizes old messages in session.)
-4. You can set system message (prompt) to instruct assistant with your situation by `ChatGPTConnection.AddSystemMessage`.
-5. Input user message and call `ChatGPTConnection.CreateMessageAsync`.
-6. Response message is in `APIResponseBody.ResultMessage` (= `APIResponseBody.Choices[0].Message.Content`).
+3. Create an instance of `ChatCompletionAPIConnection` with API key and chat model. (This instance memorizes old messages in session.)
+4. You can set system message (prompt) to instruct assistant with your situation by constructor of `ChatCompletionAPIConnection`.
+5. Input user message and call `ChatCompletionAPIConnection.CompleteChatAsync()`.
+6. Response message is in `ChatCompletionResponseBody.ResultMessage` (= `ChatCompletionResponseBody.Choices[0].Message.Content`).
 
 An essential sample code with [UniTask](https://github.com/Cysharp/UniTask) is as follows:
 
-```cs
+```csharp
 #nullable enable
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
-using Mochineko.ChatGPT_API;
-using Mochineko.ChatGPT_API.Formats;
+using Mochineko.ChatGPT_API.Memories;
 using UnityEngine;
 
-namespace XXX
+namespace Mochineko.ChatGPT_API.Samples
 {
+    /// <summary>
+    /// A sample component to complete chat by ChatGPT API on Unity.
+    /// </summary>
     public sealed class ChatCompletionSample : MonoBehaviour
     {
         /// <summary>
@@ -60,29 +63,68 @@ namespace XXX
         /// </summary>
         [SerializeField, TextArea] private string message = string.Empty;
 
-        private ChatGPTConnection? connection;
-        
+        /// <summary>
+        /// Max number of chat memory of queue.
+        /// </summary>
+        [SerializeField] private int maxMemoryCount = 20;
+
+        private ChatCompletionAPIConnection? connection;
+        private IChatMemory? memory;
+
         private void Start()
         {
-            // Create instance of ChatGPTConnection.
-            connection = new ChatGPTConnection(apiKey);
-
-            if (!string.IsNullOrEmpty(systemMessage))
+            // API Key must be set.
+            if (string.IsNullOrEmpty(apiKey))
             {
-                // Add system message when you input.
-                connection.AddSystemMessage(systemMessage);
+                Debug.LogError("OpenAI API key must be set.");
+                return;
             }
+
+            memory = new FiniteQueueChatMemory(maxMemoryCount);
+
+            // Create instance of ChatGPTConnection with specifying chat model.
+            connection = new ChatCompletionAPIConnection(
+                apiKey,
+                memory,
+                systemMessage);
         }
 
         [ContextMenu(nameof(SendChat))]
-        public async void SendChat()
+        public void SendChat()
         {
-            APIResponseBody result;
+            SendChatAsync(this.GetCancellationTokenOnDestroy()).Forget();
+        }
+        
+        [ContextMenu(nameof(ClearChatMemory))]
+        public void ClearChatMemory()
+        {
+            memory?.ClearAllMessages();
+        }
+        
+        private async UniTask SendChatAsync(CancellationToken cancellationToken)
+        {
+            // Validations
+            if (connection == null)
+            {
+                Debug.LogError($"[ChatGPT_API.Samples] Connection is null.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(message))
+            {
+                Debug.LogError($"[ChatGPT_API.Samples] Chat content is empty.");
+                return;
+            }
+
+            ChatCompletionResponseBody response;
             try
             {
+                await UniTask.SwitchToThreadPool();
+                
                 // Create message by ChatGPT chat completion API.
-                result = await connection
-                    .CreateMessageAsync(message, this.GetCancellationTokenOnDestroy());
+                response = await connection.CompleteChatAsync(
+                        message,
+                        cancellationToken);
             }
             catch (Exception e)
             {
@@ -90,9 +132,11 @@ namespace XXX
                 Debug.LogException(e);
                 return;
             }
-            
+
+            await UniTask.SwitchToMainThread(cancellationToken);
+
             // Log chat completion result.
-            Debug.Log($"[ChatGPT_API.Samples] Result:\n{result.ResultMessage}");
+            Debug.Log($"[ChatGPT_API.Samples] Result:\n{response.ResultMessage}");
         }
     }
 }
@@ -100,6 +144,11 @@ namespace XXX
 
 See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
 
+## ## How to use chat completion by ChatGPT API more resilient
+
+See `RelentChatCompletionAPIConnection` and `RelentChatCompletionSample` using [Relent](https://github.com/mochi-neko/Relent).
+
+You can use API with explicit error handling, retry, timeout, bulkhead, and so on.
 
 ## Changelog
 
