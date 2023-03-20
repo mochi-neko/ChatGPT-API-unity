@@ -2,14 +2,14 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
     /// <summary>
     /// Response body of ChatGPT chat completion API.
     /// See https://platform.openai.com/docs/guides/chat/introduction.
     /// </summary>
     [JsonObject]
-    public sealed class APIResponseBody
+    public sealed class ChatCompletionResponseBody
     {
         [JsonProperty("id"), JsonRequired]
         public string ID { get; private set; } = string.Empty;
@@ -18,7 +18,7 @@ namespace Mochineko.ChatGPT_API.Formats
         public string Object { get; private set; } = string.Empty;
 
         [JsonProperty("created"), JsonRequired]
-        public uint Created { get; private set; }
+        public int Created { get; private set; }
 
         [JsonProperty("model"), JsonRequired]
         public string Model { get; private set; } = string.Empty;
@@ -32,13 +32,14 @@ namespace Mochineko.ChatGPT_API.Formats
         /// <summary>
         /// Result of chat completion.
         /// </summary>
+        [JsonIgnore]
         public string ResultMessage
             => Choices.Length != 0 ? Choices[0].Message.Content : string.Empty;
 
         public string ToJson()
             => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public static APIResponseBody? FromJson(string json)
-            => JsonConvert.DeserializeObject<APIResponseBody>(json, new JsonSerializerSettings());
+        public static ChatCompletionResponseBody? FromJson(string json)
+            => JsonConvert.DeserializeObject<ChatCompletionResponseBody>(json, new JsonSerializerSettings());
     }
 }

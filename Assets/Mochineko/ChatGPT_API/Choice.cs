@@ -1,7 +1,7 @@
 #nullable enable
 using Newtonsoft.Json;
 
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
     [JsonObject]
     public sealed class Choice

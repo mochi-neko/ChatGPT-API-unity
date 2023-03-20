@@ -1,7 +1,7 @@
 #nullable enable
 using System;
 using Cysharp.Threading.Tasks;
-using Mochineko.ChatGPT_API.Formats;
+using Mochineko.ChatGPT_API.Memories;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -27,7 +27,7 @@ namespace Mochineko.ChatGPT_API.Samples
         /// </summary>
         [SerializeField, TextArea] private string message = string.Empty;
 
-        private ChatGPTConnection? connection;
+        private ChatCompletionAPIConnection? connection;
 
         private void Start()
         {
@@ -35,13 +35,10 @@ namespace Mochineko.ChatGPT_API.Samples
             Assert.IsNotNull(apiKey);
 
             // Create instance of ChatGPTConnection with specifying chat model.
-            connection = new ChatGPTConnection(apiKey, Model.Turbo);
-
-            if (!string.IsNullOrEmpty(systemMessage))
-            {
-                // Add system message when you input.
-                connection.AddSystemMessage(systemMessage);
-            }
+            connection = new ChatCompletionAPIConnection(
+                apiKey,
+                new SimpleChatMemory(),
+                systemMessage);
         }
 
         [ContextMenu(nameof(SendChat))]
@@ -60,12 +57,14 @@ namespace Mochineko.ChatGPT_API.Samples
                 return;
             }
 
-            APIResponseBody result;
+            ChatCompletionResponseBody response;
             try
             {
                 // Create message by ChatGPT chat completion API.
-                result = await connection
-                    .CreateMessageAsync(message, this.GetCancellationTokenOnDestroy());
+                response = await connection.CompleteChatAsync(
+                        message,
+                        this.GetCancellationTokenOnDestroy(),
+                        Model.Turbo);
             }
             catch (Exception e)
             {
@@ -75,7 +74,7 @@ namespace Mochineko.ChatGPT_API.Samples
             }
 
             // Log chat completion result.
-            Debug.Log($"[ChatGPT_API.Samples] Result:\n{result.ResultMessage}");
+            Debug.Log($"[ChatGPT_API.Samples] Result:\n{response.ResultMessage}");
         }
     }
 }

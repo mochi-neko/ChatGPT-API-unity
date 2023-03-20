@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
     /// <summary>
     /// Request body of ChatGPT chat completion API.
     /// See https://platform.openai.com/docs/api-reference/chat/create
     /// </summary>
     [JsonObject]
-    public sealed class APIRequestBody
+    public sealed class ChatCompletionRequestBody
     {
         /// <summary>
         /// [Required]
@@ -24,7 +24,7 @@ namespace Mochineko.ChatGPT_API.Formats
         /// The messages to generate chat completions for, in the chat format.
         /// </summary>
         [JsonProperty("messages"), JsonRequired]
-        public List<Message> Messages { get; }
+        public IReadOnlyList<Message> Messages { get; }
 
         /// <summary>
         /// [Optional] Defaults to 1.
@@ -112,15 +112,15 @@ namespace Mochineko.ChatGPT_API.Formats
         [JsonProperty("user")]
         public string? User { get; }
 
-        public APIRequestBody(Model model, List<Message> messages)
+        public ChatCompletionRequestBody(Model model, List<Message> messages)
         {
             this.Model = model.ToText();
             this.Messages = messages;
         }
 
-        public APIRequestBody(
+        public ChatCompletionRequestBody(
             string model,
-            List<Message> messages,
+            IReadOnlyList<Message> messages,
             float? temperature = 1f,
             float? topP = 1f,
             uint? n = 1,
@@ -155,7 +155,7 @@ namespace Mochineko.ChatGPT_API.Formats
                     NullValueHandling = NullValueHandling.Ignore
                 });
 
-        public static APIRequestBody? FromJson(string json)
-            => JsonConvert.DeserializeObject<APIRequestBody>(json);
+        public static ChatCompletionRequestBody? FromJson(string json)
+            => JsonConvert.DeserializeObject<ChatCompletionRequestBody>(json);
     }
 }

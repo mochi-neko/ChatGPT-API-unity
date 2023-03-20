@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Mochineko.ChatGPT_API.Formats;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -27,9 +26,9 @@ namespace Mochineko.ChatGPT_API.Tests
 
             var apiKey = await File.ReadAllTextAsync(apiKeyPath);
 
-            var connection = new ChatGPTConnection(apiKey, Model.Turbo);
+            var connection = new ChatCompletionAPIConnection(apiKey);
 
-            var result = await connection.CreateMessageAsync(message, CancellationToken.None);
+            var result = await connection.CompleteChatAsync(message, CancellationToken.None);
 
             string.IsNullOrEmpty(result.ResultMessage).Should().BeFalse();
 
@@ -47,9 +46,12 @@ namespace Mochineko.ChatGPT_API.Tests
 
             var apiKey = await File.ReadAllTextAsync(apiKeyPath);
 
-            var requestBody = new APIRequestBody(
-                model: Model.Turbo.ToText(),
-                messages: new List<Message>(),
+            var connection = new ChatCompletionAPIConnection(apiKey);
+
+            var result = await connection.CompleteChatAsync(
+                message,
+                CancellationToken.None,
+                model: Model.Turbo0301,
                 temperature: 1f,
                 topP: 1f,
                 n: 1,
@@ -58,12 +60,7 @@ namespace Mochineko.ChatGPT_API.Tests
                 maxTokens: null,
                 presencePenalty: 0f,
                 frequencyPenalty: 0f,
-                user: "test"
-            );
-
-            var connection = new ChatGPTConnection(apiKey, requestBody);
-
-            var result = await connection.CreateMessageAsync(message, CancellationToken.None);
+                user: "test");
 
             string.IsNullOrEmpty(result.ResultMessage).Should().BeFalse();
 
@@ -80,10 +77,13 @@ namespace Mochineko.ChatGPT_API.Tests
                 "Mochineko/ChatGPT_API.Tests/OpenAI_API_Key.txt");
 
             var apiKey = await File.ReadAllTextAsync(apiKeyPath);
+            
+            var connection = new ChatCompletionAPIConnection(apiKey);
 
-            var requestBody = new APIRequestBody(
-                model: Model.Turbo.ToText(),
-                messages: new List<Message>(),
+            Func<Task> send = async () => await connection.CompleteChatAsync(
+                "a",
+                CancellationToken.None,
+                model: Model.Turbo,
                 temperature: 1f,
                 topP: 1f,
                 n: 1,
@@ -92,12 +92,7 @@ namespace Mochineko.ChatGPT_API.Tests
                 maxTokens: int.MaxValue, // Over 4096 tokens
                 presencePenalty: 0f,
                 frequencyPenalty: 0f,
-                user: "test"
-            );
-
-            var connection = new ChatGPTConnection(apiKey, requestBody);
-
-            Func<Task> send = async () => await connection.CreateMessageAsync("a", CancellationToken.None);
+                user: "test");
 
             await send.Should().ThrowAsync<APIErrorException>(because: "max_tokens is too long.");
         }
@@ -108,23 +103,9 @@ namespace Mochineko.ChatGPT_API.Tests
         {
             var apiKey = "invalid";
 
-            var requestBody = new APIRequestBody(
-                model: Model.Turbo.ToText(),
-                messages: new List<Message>(),
-                temperature: 1f,
-                topP: 1f,
-                n: 1,
-                stream: false,
-                stop: null,
-                maxTokens: int.MaxValue, // Over 4096 tokens
-                presencePenalty: 0f,
-                frequencyPenalty: 0f,
-                user: "test"
-            );
+            var connection = new ChatCompletionAPIConnection(apiKey);
 
-            var connection = new ChatGPTConnection(apiKey, requestBody);
-
-            Func<Task> send = async () => await connection.CreateMessageAsync("a", CancellationToken.None);
+            Func<Task> send = async () => await connection.CompleteChatAsync("a", CancellationToken.None);
 
             await send.Should().ThrowAsync<APIErrorException>(because: "Invalid API key.");
         }

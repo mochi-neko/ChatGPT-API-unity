@@ -1,5 +1,5 @@
 #nullable enable
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
     /// <summary>
     /// Chat model.

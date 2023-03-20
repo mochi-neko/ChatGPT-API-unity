@@ -1,7 +1,7 @@
 #nullable enable
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
-    internal enum Role : byte
+    public enum Role : byte
     {
         /// <summary>
         /// "system"

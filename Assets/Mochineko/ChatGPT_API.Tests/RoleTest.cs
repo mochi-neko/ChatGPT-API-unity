@@ -1,6 +1,5 @@
 #nullable enable
 using FluentAssertions;
-using Mochineko.ChatGPT_API.Formats;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 

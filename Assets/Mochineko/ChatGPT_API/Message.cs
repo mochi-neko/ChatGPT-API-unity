@@ -2,7 +2,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Mochineko.ChatGPT_API.Formats
+namespace Mochineko.ChatGPT_API
 {
     [JsonObject]
     public sealed class Message
@@ -12,7 +12,7 @@ namespace Mochineko.ChatGPT_API.Formats
 
         internal Message()
         {
-            this.Role = Formats.Role.Assistant.ToText();
+            this.Role = ChatGPT_API.Role.Assistant.ToText();
             this.Content = string.Empty;
         }
 
