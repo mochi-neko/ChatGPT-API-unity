@@ -25,7 +25,7 @@ If you have already used Newtonsoft.Json on your project, remove dependency:`"co
 ## How to use chat completion by ChatGPT API
 
 1. Generate API key on [OpenAI](https://platform.openai.com/account/api-keys). (Take care your API key, this is a secret information then you should not open.)
-2. You can specify chat model. (Latest `gpt-3.5-turbo` or fixed `gpt-3.5-turbo-0301` are available.)
+2. You can specify chat model. (Available models are defined by `Model`.)
 3. Create an instance of `ChatCompletionAPIConnection` with API key and chat model. (This instance memorizes old messages in session.)
 4. You can set system message (prompt) to instruct assistant with your situation by constructor of `ChatCompletionAPIConnection`.
 5. Input user message and call `ChatCompletionAPIConnection.CompleteChatAsync()`.

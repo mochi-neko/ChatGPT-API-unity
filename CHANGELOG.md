@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
 
+## [0.2.1] - 2023-03-20
+
+### Added
+
+- Add GPT-4 all models.
+
 ## [0.2.0] - 2023-03-20
 
 ### Added

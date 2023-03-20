@@ -18,5 +18,17 @@ namespace Mochineko.ChatGPT_API
         /// "gpt-4" latest GPT4 model.
         /// </summary>
         Four,
+        /// <summary>
+        /// "gpt-4-0314", fixed GPT4 model at 03/14/2023.
+        /// </summary>
+        Four0314,
+        /// <summary>
+        /// "gpt-4-32k", latest GPT4 model for 32k tokens.
+        /// </summary>
+        Four32K,
+        /// <summary>
+        /// "gpt-4-32k-0314", fixed GPT4 model for 32k tokens at 03/14/2023.
+        /// </summary>
+        Four32K0314,
     }
 }

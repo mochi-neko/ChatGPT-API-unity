@@ -10,6 +10,9 @@ namespace Mochineko.ChatGPT_API
             [Model.Turbo] = "gpt-3.5-turbo",
             [Model.Turbo0301] = "gpt-3.5-turbo-0301",
             [Model.Four] = "gpt-4",
+            [Model.Four0314] = "gpt-4-0314",
+            [Model.Four32K] = "gpt-4-32k",
+            [Model.Four32K0314] = "gpt-4-32k-0314",
         };
 
         public static Model ToModel(this string model)
