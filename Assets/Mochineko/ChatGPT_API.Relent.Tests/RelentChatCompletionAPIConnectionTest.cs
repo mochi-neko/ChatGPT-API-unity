@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Mochineko.ChatGPT_API.Relent;
 using Mochineko.Relent.Resilience;
 using Mochineko.Relent.Resilience.Bulkhead;
 using Mochineko.Relent.Resilience.CircuitBreaker;
