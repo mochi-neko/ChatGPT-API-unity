@@ -150,6 +150,17 @@ See `RelentChatCompletionAPIConnection` and `RelentChatCompletionSample` using [
 
 You can use API with explicit error handling, retry, timeout, bulkhead, and so on.
 
+```json
+{
+  "dependencies": {
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.2.2",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.2.2",
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    ...
+  }
+}
+```
+
 ## Changelog
 
 See [CHANGELOG](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/CHANGELOG.md)
