@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
 
+## [0.2.2] - 2023-03-21
+
+### Added
+
+- Add option to specify instance of `HttpClient`.
+- Add option to receive response as `Stream`.
+
+### Changed
+
+- Improve null check of response content.
+
 ## [0.2.1] - 2023-03-20
 
 ### Added
