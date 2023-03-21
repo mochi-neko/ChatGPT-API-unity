@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -53,7 +54,7 @@ namespace Mochineko.ChatGPT_API.Relent
         }
 
         /// <summary>
-        /// Create a message though ChatGPT chat completion API.
+        /// Completes chat though ChatGPT chat completion API.
         /// </summary>
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -154,22 +155,29 @@ namespace Mochineko.ChatGPT_API.Relent
                 // Post request and receive response
                 using var responseMessage = await httpClient
                     .SendAsync(requestMessage, cancellationToken);
+                
                 if (responseMessage == null)
                 {
                     return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
                         $"Failed because {nameof(HttpResponseMessage)} was null.");
                 }
 
-                var responseJson = await responseMessage.Content.ReadAsStringAsync();
-                if (string.IsNullOrEmpty(responseJson))
+                if (responseMessage.Content == null)
                 {
                     return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
-                        $"Failed because response string was null.");
+                        $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
                 }
-
+                
                 // Succeeded
                 if (responseMessage.IsSuccessStatusCode)
                 {
+                    var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                    if (string.IsNullOrEmpty(responseJson))
+                    {
+                        return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                            $"Failed because response string was null.");
+                    }
+                    
                     // Deserialize response body
                     ChatCompletionResponseBody responseBody;
                     var deserializationResult = JsonSerializer.DeserializeResponseBody(responseJson);
@@ -239,6 +247,170 @@ namespace Mochineko.ChatGPT_API.Relent
             catch (Exception exception)
             {
                 return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                    $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
+            }
+        }
+        
+        /// <summary>
+        /// Completes chat though ChatGPT chat completion API.
+        /// </summary>
+        /// <param name="content">Message content to send ChatGPT API</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="model"></param>
+        /// <param name="temperature"></param>
+        /// <param name="topP"></param>
+        /// <param name="n"></param>
+        /// <param name="stream"></param>
+        /// <param name="stop"></param>
+        /// <param name="maxTokens"></param>
+        /// <param name="presencePenalty"></param>
+        /// <param name="frequencyPenalty"></param>
+        /// <param name="logitBias"></param>
+        /// <param name="user"></param>
+        /// <returns>Response from ChatGPT chat completion API.</returns>
+        public async Task<IUncertainResult<Stream>> CompleteChatAsStreamAsync(
+            string content,
+            CancellationToken cancellationToken,
+            Model model = Model.Turbo,
+            float? temperature = null,
+            float? topP = null,
+            uint? n = null,
+            bool? stream = null,
+            string[]? stop = null,
+            int? maxTokens = null,
+            float? presencePenalty = null,
+            float? frequencyPenalty = null,
+            Dictionary<int, int>? logitBias = null,
+            string? user = null)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return UncertainResultFactory.Fail<Stream>(
+                    "Failed because content is null or empty.");
+            }
+            
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return UncertainResultFactory.Retry<Stream>(
+                    "Retryable because cancellation has been already requested.");
+            }
+
+            // Record user message
+            chatMemory.AddMessage(new Message(Role.User, content));
+            
+            // Create request body
+            var requestBody = new ChatCompletionRequestBody(
+                model.ToText(),
+                chatMemory.Memories,
+                temperature,
+                topP,
+                n,
+                stream,
+                stop,
+                maxTokens,
+                presencePenalty,
+                frequencyPenalty,
+                logitBias,
+                user);
+
+            // Serialize request body
+            string requestBodyJson; 
+            var serializationResult = requestBody.SerializeRequestBody();
+            if (serializationResult is ISuccessResult<string> serializationSuccess)
+            {
+                requestBodyJson = serializationSuccess.Result;
+            }
+            else if (serializationResult is IFailureResult<string> serializationFailure)
+            {
+                return UncertainResultFactory.Fail<Stream>(
+                    $"Failed because -> {serializationFailure.Message}.");
+            }
+            else
+            {
+                throw new ResultPatternMatchException(nameof(serializationResult));
+            }
+
+            // Build request message
+            using var requestMessage = new HttpRequestMessage(
+                HttpMethod.Post, 
+                ChatCompletionEndPoint);
+
+            // Request headers
+            requestMessage
+                .Headers
+                .Add("Authorization", $"Bearer {apiKey}");
+
+            // Request contents
+            var requestContent = new StringContent(
+                content: requestBodyJson,
+                encoding: System.Text.Encoding.UTF8,
+                mediaType: "application/json");
+
+            requestMessage.Content = requestContent;
+
+            try
+            {
+                // Post request and receive response
+                using var responseMessage = await httpClient
+                    .SendAsync(requestMessage, cancellationToken);
+                
+                if (responseMessage == null)
+                {
+                    return UncertainResultFactory.Fail<Stream>(
+                        $"Failed because {nameof(HttpResponseMessage)} was null.");
+                }
+
+                if (responseMessage.Content == null)
+                {
+                    return UncertainResultFactory.Fail<Stream>(
+                        $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
+                }
+
+                // Succeeded
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    var responseStream = await responseMessage.Content.ReadAsStreamAsync();
+
+                    return UncertainResultFactory.Succeed(responseStream);
+                }
+                // Retryable
+                else if (responseMessage.StatusCode is HttpStatusCode.TooManyRequests
+                         || (int)responseMessage.StatusCode is >= 500 and <= 599)
+                {
+                    return UncertainResultFactory.Retry<Stream>(
+                        $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}.");
+                }
+                // Response error
+                else
+                {
+                    return UncertainResultFactory.Fail<Stream>(
+                        $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}."
+                    );
+                }
+            }
+            // Request error
+            catch (HttpRequestException exception)
+            {
+                return UncertainResultFactory.Retry<Stream>(
+                    $"Retryable because {nameof(HttpRequestException)} was thrown during calling the API -> {exception}.");
+            }
+            // Task cancellation
+            catch (TaskCanceledException exception)
+                when (exception.CancellationToken == cancellationToken)
+            {
+                return UncertainResultFactory.Retry<Stream>(
+                    $"Failed because task was canceled by user during call to the API -> {exception}.");
+            }
+            // Operation cancellation 
+            catch (OperationCanceledException exception)
+            {
+                return UncertainResultFactory.Retry<Stream>(
+                    $"Retryable because operation was cancelled during calling the API -> {exception}.");
+            }
+            // Unhandled error
+            catch (Exception exception)
+            {
+                return UncertainResultFactory.Fail<Stream>(
                     $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
             }
         }
