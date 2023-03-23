@@ -11,7 +11,7 @@ Add dependencies:
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.2.2",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.3.0",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     ...
   }
@@ -154,8 +154,8 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.2.2",
-    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.2.2",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.3.0",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.3.0",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     ...
   }
@@ -169,7 +169,7 @@ Import `TiktokenSharp` package by adding following line to your `mainfest.json`.
 ```json
 {
   "dependencies": {
-    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.2.2",
+    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.3.0",
     ...
   }
 }
