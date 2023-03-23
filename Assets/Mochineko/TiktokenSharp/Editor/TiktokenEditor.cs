@@ -42,7 +42,7 @@ namespace TiktokenSharp.Editor
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField(
-                "Token Count:",
+                "Token Length:",
                 tokens != null ? tokens.Count.ToString() : "0");
 
             EditorGUILayout.Space();
