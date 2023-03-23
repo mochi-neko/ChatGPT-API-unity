@@ -1,0 +1,18 @@
+{
+    "name": "Mochineko.TiktokenSharp.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:17094be796ef04d9597855583d8aa5f6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

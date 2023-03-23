@@ -1,0 +1,11 @@
+{
+  "name": "com.mochineko.tiktoken-sharp",
+  "version": "1.0.3",
+  "displayName": "TiktokenSharp",
+  "description": "Tokenizer for GPT models.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Mochineko",
+    "email": "t.o.e.4315@gmail.com"
+  }
+}

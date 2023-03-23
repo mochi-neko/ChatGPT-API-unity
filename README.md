@@ -146,7 +146,8 @@ See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Asse
 
 ## How to use chat completion by ChatGPT API more resilient
 
-See `RelentChatCompletionAPIConnection` and `RelentChatCompletionSample` using [Relent](https://github.com/mochi-neko/Relent).
+See `RelentChatCompletionAPIConnection` and `RelentChatCompletionSample`
+ using [Relent](https://github.com/mochi-neko/Relent).
 
 You can use API with explicit error handling, retry, timeout, bulkhead, and so on.
 
@@ -160,6 +161,42 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
   }
 }
 ```
+
+## How to calculate token length of text in local
+
+Import `TiktokenSharp` package by adding following line to your `mainfest.json`.
+
+```json
+{
+  "dependencies": {
+    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.2.2",
+    ...
+  }
+}
+```
+
+You can calculate token length of text
+ by `TiktokenSharp.Tiktoken.Encode(string)` as follows:
+
+```csharp
+using TiktokenSharp;
+
+private int CalculateTokenLength()
+{
+    string text = "A text that you want to calculate token length.";
+
+    // Specify model name.
+    Tiktoken tiktoken = TikToken.EncodingForModel("gpt-3.5-turbo");
+    
+    // Encoding is tokenizing.
+    int[] tokens = tikToken.Encode(text);
+    
+    return tokens.Length;
+}
+```
+
+If you want to calculate on Unity editor,
+ please use `ItemuMenu > Mochineko > TiktokenEditor` window.
 
 ## Changelog
 
