@@ -11,7 +11,7 @@ Add dependencies:
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.3.1",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.4.0",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     ...
   }
@@ -154,8 +154,8 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.3.1",
-    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.3.1",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.4.0",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.4.0",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     ...
   }
@@ -169,7 +169,7 @@ Import `TiktokenSharp` package by adding following line to your `mainfest.json`.
 ```json
 {
   "dependencies": {
-    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.3.1",
+    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.4.0",
     ...
   }
 }
@@ -197,6 +197,32 @@ private int CalculateTokenLength()
 
 If you want to calculate on Unity editor,
  please use `ItemuMenu > Mochineko > TiktokenEditor` window.
+
+## How to customize chat memories
+
+You can use customized memories of chat by implementing `IChatMemory` interface.
+
+Presets are available in `Mochineko.ChatGPT_API.Memories` package as follows:
+
+- `FiniteQueueChatMemory`
+  - A queue that has max number of messages.
+- `FiniteQueueWithFixedPromptsChatMemory`
+  - A queue that has max number of user/assistant messages and free number of prompts (system messages).
+- `FiniteTokenLengthQueueChatMemory`
+ - A queue that has max number of token lenght of all messages.
+- `FiniteTokenLengthQueueWithFixedPromptsChatMemory`
+ - A queue that has max number of token lenght of user/assistant messages and free number of prompts (system messages).
+
+```csharp
+
+```json
+{
+  "dependencies": {
+    "com.mochineko.chatgpt-api.memory": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Memory#0.4.0",
+    ...
+  }
+}
+```
 
 ## Changelog
 
