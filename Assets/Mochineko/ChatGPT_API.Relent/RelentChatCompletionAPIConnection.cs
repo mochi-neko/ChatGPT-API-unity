@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Mochineko.ChatGPT_API.Memories;
 using Mochineko.Relent.Result;
 using Mochineko.Relent.UncertainResult;
 

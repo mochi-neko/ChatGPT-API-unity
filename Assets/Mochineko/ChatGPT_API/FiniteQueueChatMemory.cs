@@ -1,7 +1,7 @@
 #nullable enable
 using System.Collections.Generic;
 
-namespace Mochineko.ChatGPT_API.Memories
+namespace Mochineko.ChatGPT_API
 {
     public sealed class FiniteQueueChatMemory : IChatMemory
     {

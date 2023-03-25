@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Mochineko.ChatGPT_API
 {
-    internal static class RoleResolver
+    public static class RoleResolver
     {
         private static readonly IReadOnlyDictionary<Role, string> Dictionary = new Dictionary<Role, string>
         {

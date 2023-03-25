@@ -2,7 +2,6 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Mochineko.ChatGPT_API.Memories;
 using UnityEngine;
 
 namespace Mochineko.ChatGPT_API.Samples

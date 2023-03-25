@@ -5,7 +5,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Mochineko.ChatGPT_API.Memories;
 using Newtonsoft.Json;
 
 namespace Mochineko.ChatGPT_API
