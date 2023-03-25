@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
 
+## [0.3.1] - 2023-03-25
+
+### Changed
+
+- Improve accessibility of `Messaage`.
+
 ## [0.3.0] - 2023-03-23
 
 ### Added
