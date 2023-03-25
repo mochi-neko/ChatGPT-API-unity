@@ -1,20 +1,16 @@
 {
-    "name": "Mochineko.ChatGPT_API.Relent.Samples",
+    "name": "Mochineko.ChatGPT_API.Memory",
     "rootNamespace": "",
     "references": [
         "GUID:d63d7a0555b6b4b0a9148c0dbfcd7265",
-        "GUID:5ec8620e0ca6d4d9fb24dbcad8869bd5",
-        "GUID:5c67e8a6c5956403bb150154fc83ee6f",
-        "GUID:2620e54ab6edb48f48d55966fd5662fb",
-        "GUID:51d11816546934d4a937e4a420478ce5",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:17094be796ef04d9597855583d8aa5f6"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Mochineko.ChatGPT_API.Memory;
 using Mochineko.Relent.Resilience;
 using Mochineko.Relent.Resilience.Bulkhead;
 using Mochineko.Relent.Resilience.Retry;

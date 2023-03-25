@@ -45,7 +45,9 @@ namespace Mochineko.ChatGPT_API
 
             if (!string.IsNullOrEmpty(prompt))
             {
-                this.chatMemory.AddMessage(new Message(Role.System, prompt));
+                this.chatMemory.AddMessageAsync(
+                    new Message(Role.System, prompt),
+                    CancellationToken.None);
             }
             
             this.httpClient = httpClient ?? HttpClientPool.PooledClient;
@@ -91,12 +93,14 @@ namespace Mochineko.ChatGPT_API
             cancellationToken.ThrowIfCancellationRequested();
 
             // Record user message
-            chatMemory.AddMessage(new Message(Role.User, content));
+            await chatMemory.AddMessageAsync(
+                new Message(Role.User, content),
+                cancellationToken);
 
             // Create request body
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
-                chatMemory.Memories,
+                chatMemory.Messages,
                 temperature,
                 topP,
                 n,
@@ -159,7 +163,9 @@ namespace Mochineko.ChatGPT_API
                 // Record assistant messages
                 foreach (var choice in responseBody.Choices)
                 {
-                    chatMemory.AddMessage(choice.Message);
+                    await chatMemory.AddMessageAsync(
+                        choice.Message,
+                        cancellationToken);
                 }
                 
                 return responseBody;
@@ -221,12 +227,14 @@ namespace Mochineko.ChatGPT_API
             cancellationToken.ThrowIfCancellationRequested();
 
             // Record user message
-            chatMemory.AddMessage(new Message(Role.User, content));
+            await chatMemory.AddMessageAsync(
+                new Message(Role.User, content),
+                cancellationToken);
 
             // Create request body
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
-                chatMemory.Memories,
+                chatMemory.Messages,
                 temperature,
                 topP,
                 n,

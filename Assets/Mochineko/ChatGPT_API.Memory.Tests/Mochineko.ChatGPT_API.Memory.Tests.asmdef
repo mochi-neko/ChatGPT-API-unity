@@ -1,0 +1,24 @@
+{
+    "name": "Mochineko.ChatGPT_API.Memory.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:e372c541aba5148868e12aa078ca7c20",
+        "GUID:d63d7a0555b6b4b0a9148c0dbfcd7265",
+        "GUID:5ec8620e0ca6d4d9fb24dbcad8869bd5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
