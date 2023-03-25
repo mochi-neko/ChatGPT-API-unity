@@ -1,29 +1,44 @@
 #nullable enable
-using System;
 using Newtonsoft.Json;
 
 namespace Mochineko.ChatGPT_API
 {
+    /// <summary>
+    /// A message between user, assistant and system.
+    /// </summary>
     [JsonObject]
     public sealed class Message
     {
-        [JsonProperty("role")] public string Role { get; private set; }
-        [JsonProperty("content")] public string Content { get; private set; }
+        /// <summary>
+        /// "role" string of message owner.
+        /// </summary>
+        [JsonProperty("role")]
+        public string RoleString
+        {
+            get => this.Role.ToText();
+            set => this.Role = value.ToRole();
+        }
+        /// <summary>
+        /// Role of message owner.
+        /// </summary>
+        [JsonIgnore]
+        public Role Role { get; private set; }
+        
+        /// <summary>
+        /// Message content.
+        /// </summary>
+        [JsonProperty("content")]
+        public string Content { get; private set; }
 
         internal Message()
         {
-            this.Role = ChatGPT_API.Role.Assistant.ToText();
+            this.Role = Role.Assistant;
             this.Content = string.Empty;
         }
-
-        internal Message(Role role, string content)
+        
+        public Message(Role role, string content)
         {
-            if (string.IsNullOrEmpty(content))
-            {
-                throw new ArgumentNullException(content);
-            }
-
-            this.Role = role.ToText();
+            this.Role = role;
             this.Content = content;
         }
     }
