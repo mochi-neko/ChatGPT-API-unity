@@ -89,13 +89,13 @@ namespace Mochineko.ChatGPT_API.Relent
         {
             if (string.IsNullOrEmpty(content))
             {
-                return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                     "Failed because content is null or empty.");
             }
             
             if (cancellationToken.IsCancellationRequested)
             {
-                return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     "Retryable because cancellation has been already requested.");
             }
 
@@ -108,7 +108,7 @@ namespace Mochineko.ChatGPT_API.Relent
             }
             catch (OperationCanceledException exception)
             {
-                return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     $"Retryable because operation has been canceled during recording user message -> {exception.Message}.");
             }
 
@@ -136,7 +136,7 @@ namespace Mochineko.ChatGPT_API.Relent
             }
             else if (serializationResult is IFailureResult<string> serializationFailure)
             {
-                return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                     $"Failed because -> {serializationFailure.Message}.");
             }
             else
@@ -170,13 +170,13 @@ namespace Mochineko.ChatGPT_API.Relent
                 
                 if (responseMessage == null)
                 {
-                    return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                    return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                         $"Failed because {nameof(HttpResponseMessage)} was null.");
                 }
 
                 if (responseMessage.Content == null)
                 {
-                    return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                    return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                         $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
                 }
                 
@@ -186,7 +186,7 @@ namespace Mochineko.ChatGPT_API.Relent
                     var responseJson = await responseMessage.Content.ReadAsStringAsync();
                     if (string.IsNullOrEmpty(responseJson))
                     {
-                        return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                        return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                             $"Failed because response string was null.");
                     }
                     
@@ -199,7 +199,7 @@ namespace Mochineko.ChatGPT_API.Relent
                     }
                     else if (deserializationResult is IFailureResult<ChatCompletionResponseBody> deserializationFailure)
                     {
-                        return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                        return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                             $"Failed because JSON deserialization of {nameof(ChatCompletionResponseBody)} was failure -> {deserializationFailure.Message}.");
                     }
                     else
@@ -209,7 +209,7 @@ namespace Mochineko.ChatGPT_API.Relent
 
                     if (responseBody.Choices.Length == 0)
                     {
-                        return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                        return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                             $"Failed because {nameof(ChatCompletionResponseBody.Choices)} was empty.");
                     }
 
@@ -221,19 +221,19 @@ namespace Mochineko.ChatGPT_API.Relent
                             cancellationToken);
                     }
 
-                    return UncertainResultFactory.Succeed(responseBody);
+                    return UncertainResults.Succeed(responseBody);
                 }
                 // Retryable
                 else if (responseMessage.StatusCode is HttpStatusCode.TooManyRequests
                          || (int)responseMessage.StatusCode is >= 500 and <= 599)
                 {
-                    return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                    return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                         $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}.");
                 }
                 // Response error
                 else
                 {
-                    return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                    return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                         $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}."
                     );
                 }
@@ -241,26 +241,26 @@ namespace Mochineko.ChatGPT_API.Relent
             // Request error
             catch (HttpRequestException exception)
             {
-                return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     $"Retryable because {nameof(HttpRequestException)} was thrown during calling the API -> {exception}.");
             }
             // Task cancellation
             catch (TaskCanceledException exception)
                 when (exception.CancellationToken == cancellationToken)
             {
-                return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     $"Failed because task was canceled by user during call to the API -> {exception}.");
             }
             // Operation cancellation 
             catch (OperationCanceledException exception)
             {
-                return UncertainResultFactory.Retry<ChatCompletionResponseBody>(
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     $"Retryable because operation was cancelled during calling the API -> {exception}.");
             }
             // Unhandled error
             catch (Exception exception)
             {
-                return UncertainResultFactory.Fail<ChatCompletionResponseBody>(
+                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                     $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
             }
         }
@@ -299,13 +299,13 @@ namespace Mochineko.ChatGPT_API.Relent
         {
             if (string.IsNullOrEmpty(content))
             {
-                return UncertainResultFactory.Fail<Stream>(
+                return UncertainResults.FailWithTrace<Stream>(
                     "Failed because content is null or empty.");
             }
             
             if (cancellationToken.IsCancellationRequested)
             {
-                return UncertainResultFactory.Retry<Stream>(
+                return UncertainResults.RetryWithTrace<Stream>(
                     "Retryable because cancellation has been already requested.");
             }
 
@@ -318,7 +318,7 @@ namespace Mochineko.ChatGPT_API.Relent
             }
             catch (OperationCanceledException exception)
             {
-                return UncertainResultFactory.Retry<Stream>(
+                return UncertainResults.RetryWithTrace<Stream>(
                     $"Retryable because operation was cancelled during recording user message -> {exception}.");
             }
 
@@ -346,7 +346,7 @@ namespace Mochineko.ChatGPT_API.Relent
             }
             else if (serializationResult is IFailureResult<string> serializationFailure)
             {
-                return UncertainResultFactory.Fail<Stream>(
+                return UncertainResults.FailWithTrace<Stream>(
                     $"Failed because -> {serializationFailure.Message}.");
             }
             else
@@ -380,13 +380,13 @@ namespace Mochineko.ChatGPT_API.Relent
                 
                 if (responseMessage == null)
                 {
-                    return UncertainResultFactory.Fail<Stream>(
+                    return UncertainResults.FailWithTrace<Stream>(
                         $"Failed because {nameof(HttpResponseMessage)} was null.");
                 }
 
                 if (responseMessage.Content == null)
                 {
-                    return UncertainResultFactory.Fail<Stream>(
+                    return UncertainResults.FailWithTrace<Stream>(
                         $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
                 }
 
@@ -395,19 +395,19 @@ namespace Mochineko.ChatGPT_API.Relent
                 {
                     var responseStream = await responseMessage.Content.ReadAsStreamAsync();
 
-                    return UncertainResultFactory.Succeed(responseStream);
+                    return UncertainResults.Succeed(responseStream);
                 }
                 // Retryable
                 else if (responseMessage.StatusCode is HttpStatusCode.TooManyRequests
                          || (int)responseMessage.StatusCode is >= 500 and <= 599)
                 {
-                    return UncertainResultFactory.Retry<Stream>(
+                    return UncertainResults.RetryWithTrace<Stream>(
                         $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}.");
                 }
                 // Response error
                 else
                 {
-                    return UncertainResultFactory.Fail<Stream>(
+                    return UncertainResults.FailWithTrace<Stream>(
                         $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}."
                     );
                 }
@@ -415,26 +415,26 @@ namespace Mochineko.ChatGPT_API.Relent
             // Request error
             catch (HttpRequestException exception)
             {
-                return UncertainResultFactory.Retry<Stream>(
+                return UncertainResults.RetryWithTrace<Stream>(
                     $"Retryable because {nameof(HttpRequestException)} was thrown during calling the API -> {exception}.");
             }
             // Task cancellation
             catch (TaskCanceledException exception)
                 when (exception.CancellationToken == cancellationToken)
             {
-                return UncertainResultFactory.Retry<Stream>(
+                return UncertainResults.RetryWithTrace<Stream>(
                     $"Failed because task was canceled by user during call to the API -> {exception}.");
             }
             // Operation cancellation 
             catch (OperationCanceledException exception)
             {
-                return UncertainResultFactory.Retry<Stream>(
+                return UncertainResults.RetryWithTrace<Stream>(
                     $"Retryable because operation was cancelled during calling the API -> {exception}.");
             }
             // Unhandled error
             catch (Exception exception)
             {
-                return UncertainResultFactory.Fail<Stream>(
+                return UncertainResults.FailWithTrace<Stream>(
                     $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
             }
         }

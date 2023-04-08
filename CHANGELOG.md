@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
 
+## [0.5.0] - 2023-04-08
+
+### Changed
+
+- Simplify package structure.
+- Update Relent version to 0.2.0.
+
 ## [0.4.0] - 2023-03-25
 
 ### Added

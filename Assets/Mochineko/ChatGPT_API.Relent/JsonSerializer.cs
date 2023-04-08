@@ -1,5 +1,4 @@
 #nullable enable
-using System;
 using Mochineko.Relent.Result;
 using Newtonsoft.Json;
 
@@ -21,23 +20,18 @@ namespace Mochineko.ChatGPT_API.Relent
 
                 if (!string.IsNullOrEmpty(json))
                 {
-                    return ResultFactory.Succeed(json);
+                    return Results.Succeed(json);
                 }
                 else
                 {
-                    return ResultFactory.Fail<string>(
+                    return Results.FailWithTrace<string>(
                         $"Failed to serialize because serialized JSON of {nameof(ChatCompletionRequestBody)} was null or empty.");
                 }
             }
-            catch (JsonSerializationException exception)
+            catch (JsonException exception)
             {
-                return ResultFactory.Fail<string>(
+                return Results.FailWithTrace<string>(
                     $"Failed to serialize {nameof(ChatCompletionRequestBody)} to JSON because -> {exception}");
-            }
-            catch (Exception exception)
-            {
-                return ResultFactory.Fail<string>(
-                    $"Failed to serialize {nameof(ChatCompletionRequestBody)} to JSON because unhandled exception -> {exception}");
             }
         }
 
@@ -49,28 +43,18 @@ namespace Mochineko.ChatGPT_API.Relent
 
                 if (requestBody != null)
                 {
-                    return ResultFactory.Succeed(requestBody);
+                    return Results.Succeed(requestBody);
                 }
                 else
                 {
-                    return ResultFactory.Fail<ChatCompletionRequestBody>(
+                    return Results.FailWithTrace<ChatCompletionRequestBody>(
                         $"Failed to deserialize because deserialized object of {nameof(ChatCompletionRequestBody)} was null.");
                 }
             }
-            catch (JsonSerializationException exception)
+            catch (JsonException exception)
             {
-                return ResultFactory.Fail<ChatCompletionRequestBody>(
+                return Results.FailWithTrace<ChatCompletionRequestBody>(
                     $"Failed to deserialize {nameof(ChatCompletionRequestBody)} from JSON because -> {exception}");
-            }
-            catch (JsonReaderException exception)
-            {
-                return ResultFactory.Fail<ChatCompletionRequestBody>(
-                    $"Failed to deserialize {nameof(ChatCompletionRequestBody)} from JSON because -> {exception}");
-            }
-            catch (Exception exception)
-            {
-                return ResultFactory.Fail<ChatCompletionRequestBody>(
-                    $"Failed to deserialize {nameof(ChatCompletionRequestBody)} from JSON because unhandled exception -> {exception}");
             }
         }
         
@@ -88,23 +72,18 @@ namespace Mochineko.ChatGPT_API.Relent
 
                 if (!string.IsNullOrEmpty(json))
                 {
-                    return ResultFactory.Succeed(json);
+                    return Results.Succeed(json);
                 }
                 else
                 {
-                    return ResultFactory.Fail<string>(
+                    return Results.FailWithTrace<string>(
                         $"Failed to serialize because serialized JSON of {nameof(ChatCompletionResponseBody)} was null or empty.");
                 }
             }
-            catch (JsonSerializationException exception)
+            catch (JsonException exception)
             {
-                return ResultFactory.Fail<string>(
+                return Results.FailWithTrace<string>(
                     $"Failed to serialize {nameof(ChatCompletionResponseBody)} to JSON because -> {exception}");
-            }
-            catch (Exception exception)
-            {
-                return ResultFactory.Fail<string>(
-                    $"Failed to serialize {nameof(ChatCompletionResponseBody)} to JSON because unhandled exception -> {exception}");
             }
         }
 
@@ -116,28 +95,18 @@ namespace Mochineko.ChatGPT_API.Relent
 
                 if (requestBody != null)
                 {
-                    return ResultFactory.Succeed(requestBody);
+                    return Results.Succeed(requestBody);
                 }
                 else
                 {
-                    return ResultFactory.Fail<ChatCompletionResponseBody>(
+                    return Results.FailWithTrace<ChatCompletionResponseBody>(
                         $"Failed to deserialize because deserialized object of {nameof(ChatCompletionResponseBody)} was null.");
                 }
             }
             catch (JsonSerializationException exception)
             {
-                return ResultFactory.Fail<ChatCompletionResponseBody>(
+                return Results.FailWithTrace<ChatCompletionResponseBody>(
                     $"Failed to deserialize {nameof(ChatCompletionResponseBody)} from JSON because -> {exception}");
-            }
-            catch (JsonReaderException exception)
-            {
-                return ResultFactory.Fail<ChatCompletionResponseBody>(
-                    $"Failed to deserialize {nameof(ChatCompletionResponseBody)} from JSON because -> {exception}");
-            }
-            catch (Exception exception)
-            {
-                return ResultFactory.Fail<ChatCompletionResponseBody>(
-                    $"Failed to deserialize {nameof(ChatCompletionResponseBody)} from JSON because unhandled exception -> {exception}");
             }
         }
     }
