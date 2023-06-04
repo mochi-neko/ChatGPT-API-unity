@@ -147,9 +147,7 @@ NOTICE that this sample requres these dependencies:
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.4.0",
-    "com.mochineko.chatgpt-api.memory": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Memory#0.4.0",
-    "com.mochineko.tiktoken-sharp": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/TiktokenSharp#0.4.0",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.5.0",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     ...
