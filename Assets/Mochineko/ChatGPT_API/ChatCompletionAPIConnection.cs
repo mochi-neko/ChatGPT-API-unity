@@ -50,7 +50,7 @@ namespace Mochineko.ChatGPT_API
                     new Message(Role.System, prompt),
                     CancellationToken.None);
             }
-            
+
             this.httpClient = httpClient ?? HttpClientPool.PooledClient;
         }
 
@@ -74,6 +74,7 @@ namespace Mochineko.ChatGPT_API
         /// <param name="frequencyPenalty"></param>
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
+        /// <param name="verbose"></param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
         /// <exception cref="Exception">System exceptions</exception>
         /// <exception cref="ArgumentException"></exception>
@@ -82,22 +83,23 @@ namespace Mochineko.ChatGPT_API
         /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
         /// <exception cref="JsonSerializationException">JSON error</exception>
         public async Task<ChatCompletionResponseBody> CompleteChatAsync(
-             string content,
-             CancellationToken cancellationToken,
-             Model model = Model.Turbo,
-             IReadOnlyList<Function>? functions = null,
-             string? functionCallString = null,
-             FunctionCallSpecifying? functionCallSpecifying = null,
-             float? temperature = null,
-             float? topP = null,
-             uint? n = null,
-             bool? stream = null,
-             string[]? stop = null,
-             int? maxTokens = null,
-             float? presencePenalty = null,
-             float? frequencyPenalty = null,
-             Dictionary<int, int>? logitBias = null,
-             string? user = null)
+            string content,
+            CancellationToken cancellationToken,
+            Model model = Model.Turbo,
+            IReadOnlyList<Function>? functions = null,
+            string? functionCallString = null,
+            FunctionCallSpecifying? functionCallSpecifying = null,
+            float? temperature = null,
+            float? topP = null,
+            uint? n = null,
+            bool? stream = null,
+            string[]? stop = null,
+            int? maxTokens = null,
+            float? presencePenalty = null,
+            float? frequencyPenalty = null,
+            Dictionary<int, int>? logitBias = null,
+            string? user = null,
+            bool verbose = false)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -124,6 +126,12 @@ namespace Mochineko.ChatGPT_API
                 logitBias,
                 user);
 
+            var requestJson = requestBody.ToJson();
+            if (verbose)
+            {
+                Debug.Log($"[ChatGPT_API] Request content:\n{requestJson}]");
+            }
+
             // Build request message
             using var requestMessage = new HttpRequestMessage(
                 HttpMethod.Post, ChatCompletionEndPoint);
@@ -131,17 +139,17 @@ namespace Mochineko.ChatGPT_API
                 .Add("Authorization", $"Bearer {apiKey}");
 
             var requestContent = new StringContent(
-                content: requestBody.ToJson(),
+                content: requestJson,
                 encoding: System.Text.Encoding.UTF8,
                 mediaType: "application/json");
 
             requestMessage.Content = requestContent;
-            
+
             // Post request and receive response
             // NOTE: Can throw exceptions
             using var responseMessage = await httpClient
                 .SendAsync(requestMessage, cancellationToken);
-            
+
             if (responseMessage == null)
             {
                 throw new Exception($"[ChatGPT_API] HttpResponseMessage is null.");
@@ -157,8 +165,13 @@ namespace Mochineko.ChatGPT_API
             {
                 throw new Exception($"[ChatGPT_API] Response JSON is null or empty.");
             }
-            
-            Debug.Log($"JSON:\n{responseJson}");
+
+            if (verbose)
+            {
+                Debug.Log(
+                    $"[ChatGPT_API] Status code: {(int)responseMessage.StatusCode}, {responseMessage.StatusCode}");
+                Debug.Log($"[ChatGPT_API] Response body:\n{responseJson}");
+            }
 
             // Succeeded
             if (responseMessage.IsSuccessStatusCode)
@@ -181,7 +194,7 @@ namespace Mochineko.ChatGPT_API
                         choice.Message,
                         cancellationToken);
                 }
-                
+
                 return responseBody;
             }
             // Failed
@@ -195,12 +208,12 @@ namespace Mochineko.ChatGPT_API
                 {
                     throw new APIErrorException(responseJson, responseMessage.StatusCode, e);
                 }
-                
+
                 throw new Exception(
                     $"[ChatGPT_API] System error with status code:{responseMessage.StatusCode}, message:{responseJson}");
             }
         }
-        
+
         /// <summary>
         /// Completes chat as <see cref="Stream"/> though ChatGPT chat completion API.
         /// https://platform.openai.com/docs/api-reference/chat/create
@@ -221,6 +234,7 @@ namespace Mochineko.ChatGPT_API
         /// <param name="frequencyPenalty"></param>
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
+        /// <param name="verbose"></param>
         /// <returns>Response stream from ChatGPT chat completion API.</returns>
         /// <exception cref="Exception">System exceptions</exception>
         /// <exception cref="APIErrorException">API error response</exception>
@@ -228,30 +242,32 @@ namespace Mochineko.ChatGPT_API
         /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
         /// <exception cref="JsonSerializationException">JSON error</exception>
         public async Task<Stream> CompleteChatAsStreamAsync(
-             string content,
-             CancellationToken cancellationToken,
-             Model model = Model.Turbo,
-             IReadOnlyList<Function>? functions = null,
-             string? functionCallString = null,
-             FunctionCallSpecifying? functionCallSpecifying = null,
-             float? temperature = null,
-             float? topP = null,
-             uint? n = null,
-             bool? stream = null,
-             string[]? stop = null,
-             int? maxTokens = null,
-             float? presencePenalty = null,
-             float? frequencyPenalty = null,
-             Dictionary<int, int>? logitBias = null,
-             string? user = null)
+            string content,
+            CancellationToken cancellationToken,
+            Model model = Model.Turbo,
+            IReadOnlyList<Function>? functions = null,
+            string? functionCallString = null,
+            FunctionCallSpecifying? functionCallSpecifying = null,
+            float? temperature = null,
+            float? topP = null,
+            uint? n = null,
+            bool? stream = null,
+            string[]? stop = null,
+            int? maxTokens = null,
+            float? presencePenalty = null,
+            float? frequencyPenalty = null,
+            Dictionary<int, int>? logitBias = null,
+            string? user = null,
+            bool verbose = false)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (functionCallString != null && functionCallSpecifying != null)
             {
-                throw new ArgumentException($"You can use only one of {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
+                throw new ArgumentException(
+                    $"You can use only one of {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
             }
-            
+
             // Record user message
             await chatMemory.AddMessageAsync(
                 new Message(Role.User, content),
@@ -275,6 +291,12 @@ namespace Mochineko.ChatGPT_API
                 logitBias,
                 user);
 
+            var requestJson = requestBody.ToJson();
+            if (verbose)
+            {
+                Debug.Log($"[ChatGPT_API] Request body:\n{requestJson}");
+            }
+
             // Build request message
             using var requestMessage = new HttpRequestMessage(
                 HttpMethod.Post, ChatCompletionEndPoint);
@@ -282,27 +304,33 @@ namespace Mochineko.ChatGPT_API
                 .Add("Authorization", $"Bearer {apiKey}");
 
             var requestContent = new StringContent(
-                content: requestBody.ToJson(),
+                content: requestJson,
                 encoding: System.Text.Encoding.UTF8,
                 mediaType: "application/json");
 
             requestMessage.Content = requestContent;
-            
+
             // Post request and receive response
             // NOTE: Can throw exceptions
             using var responseMessage = await httpClient
                 .SendAsync(requestMessage, cancellationToken);
-            
+
             if (responseMessage == null)
             {
                 throw new Exception($"[ChatGPT_API] HttpResponseMessage is null.");
             }
-            
+
             if (responseMessage.Content == null)
             {
                 throw new Exception($"[ChatGPT_API] HttpResponseMessage.Content is null.");
             }
-            
+
+            if (verbose)
+            {
+                Debug.Log(
+                    $"[ChatGPT_API] Status code: {(int)responseMessage.StatusCode}, {responseMessage.StatusCode}");
+            }
+
             // Succeeded
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -316,7 +344,7 @@ namespace Mochineko.ChatGPT_API
                 {
                     throw new Exception($"[ChatGPT_API] Response JSON is null or empty.");
                 }
-                
+
                 try
                 {
                     responseMessage.EnsureSuccessStatusCode();
@@ -325,7 +353,7 @@ namespace Mochineko.ChatGPT_API
                 {
                     throw new APIErrorException(responseJson, responseMessage.StatusCode, e);
                 }
-                
+
                 throw new Exception(
                     $"[ChatGPT_API] System error with status code:{responseMessage.StatusCode}, message:{responseJson}");
             }

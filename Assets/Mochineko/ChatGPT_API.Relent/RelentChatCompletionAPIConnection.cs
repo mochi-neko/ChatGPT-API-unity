@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mochineko.Relent.Result;
 using Mochineko.Relent.UncertainResult;
+using UnityEngine;
 
 namespace Mochineko.ChatGPT_API.Relent
 {
@@ -19,7 +20,7 @@ namespace Mochineko.ChatGPT_API.Relent
         private readonly string apiKey;
         private readonly IChatMemory chatMemory;
         private readonly HttpClient httpClient;
-        
+
         private const string ChatCompletionEndPoint = "https://api.openai.com/v1/chat/completions";
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="frequencyPenalty"></param>
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
+        /// <param name="verbose"></param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
         public async Task<IUncertainResult<ChatCompletionResponseBody>> CompleteChatAsync(
             string content,
@@ -91,14 +93,15 @@ namespace Mochineko.ChatGPT_API.Relent
             float? presencePenalty = null,
             float? frequencyPenalty = null,
             Dictionary<int, int>? logitBias = null,
-            string? user = null)
+            string? user = null,
+            bool verbose = false)
         {
             if (string.IsNullOrEmpty(content))
             {
                 return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                     "Failed because content is null or empty.");
             }
-            
+
             if (cancellationToken.IsCancellationRequested)
             {
                 return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
@@ -137,11 +140,15 @@ namespace Mochineko.ChatGPT_API.Relent
                 user);
 
             // Serialize request body
-            string requestBodyJson; 
+            string requestBodyJson;
             var serializationResult = requestBody.SerializeRequestBody();
             if (serializationResult is ISuccessResult<string> serializationSuccess)
             {
                 requestBodyJson = serializationSuccess.Result;
+                if (verbose)
+                {
+                    Debug.Log($"[ChatGPT_API.Relent] Request body:\n{requestBodyJson}");
+                }
             }
             else if (serializationResult is IFailureResult<string> serializationFailure)
             {
@@ -155,7 +162,7 @@ namespace Mochineko.ChatGPT_API.Relent
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
-                HttpMethod.Post, 
+                HttpMethod.Post,
                 ChatCompletionEndPoint);
 
             // Request headers
@@ -171,12 +178,13 @@ namespace Mochineko.ChatGPT_API.Relent
 
             requestMessage.Content = requestContent;
 
+            HttpResponseMessage responseMessage;
             try
             {
                 // Post request and receive response
-                using var responseMessage = await httpClient
+                responseMessage = await httpClient
                     .SendAsync(requestMessage, cancellationToken);
-                
+
                 if (responseMessage == null)
                 {
                     return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
@@ -188,17 +196,55 @@ namespace Mochineko.ChatGPT_API.Relent
                     return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
                         $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
                 }
-                
+            }
+            // Request error
+            catch (HttpRequestException exception)
+            {
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
+                    $"Retryable because {nameof(HttpRequestException)} was thrown during calling the API -> {exception}.");
+            }
+            // Task cancellation
+            catch (TaskCanceledException exception)
+                when (exception.CancellationToken == cancellationToken)
+            {
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
+                    $"Failed because task was canceled by user during call to the API -> {exception}.");
+            }
+            // Operation cancellation 
+            catch (OperationCanceledException exception)
+            {
+                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
+                    $"Retryable because operation was cancelled during calling the API -> {exception}.");
+            }
+            // Unhandled error
+            catch (Exception exception)
+            {
+                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
+                    $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
+            }
+
+            if (verbose)
+            {
+                Debug.Log($"[ChatGPT_API.Relent] Response status code: {responseMessage.StatusCode}");
+            }
+
+            var responseJson = await responseMessage.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(responseJson))
+            {
+                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
+                    $"Failed because response string was null.");
+            }
+
+            if (verbose)
+            {
+                Debug.Log($"[ChatGPT_API.Relent] Response body:\n{responseJson}");
+            }
+            
+            using (responseMessage)
+            {
                 // Succeeded
                 if (responseMessage.IsSuccessStatusCode)
                 {
-                    var responseJson = await responseMessage.Content.ReadAsStringAsync();
-                    if (string.IsNullOrEmpty(responseJson))
-                    {
-                        return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
-                            $"Failed because response string was null.");
-                    }
-                    
                     // Deserialize response body
                     ChatCompletionResponseBody responseBody;
                     var deserializationResult = JsonSerializer.DeserializeResponseBody(responseJson);
@@ -237,43 +283,18 @@ namespace Mochineko.ChatGPT_API.Relent
                          || (int)responseMessage.StatusCode is >= 500 and <= 599)
                 {
                     return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
-                        $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}.");
+                        $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}, response:{responseJson}.");
                 }
                 // Response error
                 else
                 {
                     return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
-                        $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}."
+                        $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}, response:{responseJson}."
                     );
                 }
             }
-            // Request error
-            catch (HttpRequestException exception)
-            {
-                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
-                    $"Retryable because {nameof(HttpRequestException)} was thrown during calling the API -> {exception}.");
-            }
-            // Task cancellation
-            catch (TaskCanceledException exception)
-                when (exception.CancellationToken == cancellationToken)
-            {
-                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
-                    $"Failed because task was canceled by user during call to the API -> {exception}.");
-            }
-            // Operation cancellation 
-            catch (OperationCanceledException exception)
-            {
-                return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
-                    $"Retryable because operation was cancelled during calling the API -> {exception}.");
-            }
-            // Unhandled error
-            catch (Exception exception)
-            {
-                return UncertainResults.FailWithTrace<ChatCompletionResponseBody>(
-                    $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
-            }
         }
-        
+
         /// <summary>
         /// Completes chat though ChatGPT chat completion API.
         /// </summary>
@@ -293,6 +314,7 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="frequencyPenalty"></param>
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
+        /// <param name="verbose"></param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
         public async Task<IUncertainResult<Stream>> CompleteChatAsStreamAsync(
             string content,
@@ -310,14 +332,15 @@ namespace Mochineko.ChatGPT_API.Relent
             float? presencePenalty = null,
             float? frequencyPenalty = null,
             Dictionary<int, int>? logitBias = null,
-            string? user = null)
+            string? user = null,
+            bool verbose = false)
         {
             if (string.IsNullOrEmpty(content))
             {
                 return UncertainResults.FailWithTrace<Stream>(
                     "Failed because content is null or empty.");
             }
-            
+
             if (cancellationToken.IsCancellationRequested)
             {
                 return UncertainResults.RetryWithTrace<Stream>(
@@ -356,11 +379,15 @@ namespace Mochineko.ChatGPT_API.Relent
                 user);
 
             // Serialize request body
-            string requestBodyJson; 
+            string requestBodyJson;
             var serializationResult = requestBody.SerializeRequestBody();
             if (serializationResult is ISuccessResult<string> serializationSuccess)
             {
                 requestBodyJson = serializationSuccess.Result;
+                if (verbose)
+                {
+                    Debug.Log($"[ChatGPT_API.Relent] Request body:\n{requestBodyJson}");
+                }
             }
             else if (serializationResult is IFailureResult<string> serializationFailure)
             {
@@ -374,7 +401,7 @@ namespace Mochineko.ChatGPT_API.Relent
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
-                HttpMethod.Post, 
+                HttpMethod.Post,
                 ChatCompletionEndPoint);
 
             // Request headers
@@ -390,12 +417,13 @@ namespace Mochineko.ChatGPT_API.Relent
 
             requestMessage.Content = requestContent;
 
+            HttpResponseMessage responseMessage;
             try
             {
                 // Post request and receive response
-                using var responseMessage = await httpClient
+                responseMessage = await httpClient
                     .SendAsync(requestMessage, cancellationToken);
-                
+
                 if (responseMessage == null)
                 {
                     return UncertainResults.FailWithTrace<Stream>(
@@ -406,28 +434,6 @@ namespace Mochineko.ChatGPT_API.Relent
                 {
                     return UncertainResults.FailWithTrace<Stream>(
                         $"Failed because {nameof(HttpResponseMessage.Content)} was null.");
-                }
-
-                // Succeeded
-                if (responseMessage.IsSuccessStatusCode)
-                {
-                    var responseStream = await responseMessage.Content.ReadAsStreamAsync();
-
-                    return UncertainResults.Succeed(responseStream);
-                }
-                // Retryable
-                else if (responseMessage.StatusCode is HttpStatusCode.TooManyRequests
-                         || (int)responseMessage.StatusCode is >= 500 and <= 599)
-                {
-                    return UncertainResults.RetryWithTrace<Stream>(
-                        $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}.");
-                }
-                // Response error
-                else
-                {
-                    return UncertainResults.FailWithTrace<Stream>(
-                        $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}."
-                    );
                 }
             }
             // Request error
@@ -454,6 +460,35 @@ namespace Mochineko.ChatGPT_API.Relent
             {
                 return UncertainResults.FailWithTrace<Stream>(
                     $"Failed because an unhandled exception was thrown when calling the API -> {exception}.");
+            }
+            
+            using (responseMessage)
+            {
+                // Succeeded
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    var responseStream = await responseMessage.Content.ReadAsStreamAsync();
+
+                    return UncertainResults.Succeed(responseStream);
+                }
+                // Retryable
+                else if (responseMessage.StatusCode is HttpStatusCode.TooManyRequests
+                         || (int)responseMessage.StatusCode is >= 500 and <= 599)
+                {
+                    var response = await requestMessage.Content.ReadAsStringAsync();
+                    
+                    return UncertainResults.RetryWithTrace<Stream>(
+                        $"Retryable because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}, response:{response}.");
+                }
+                // Response error
+                else
+                {
+                    var response = await requestMessage.Content.ReadAsStringAsync();
+
+                    return UncertainResults.FailWithTrace<Stream>(
+                        $"Failed because the API returned status code:({(int)responseMessage.StatusCode}){responseMessage.StatusCode}, response:{response}."
+                    );
+                }
             }
         }
     }

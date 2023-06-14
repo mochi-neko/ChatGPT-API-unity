@@ -160,7 +160,7 @@ namespace Mochineko.ChatGPT_API.Tests
                     functionCallSpecifying: new FunctionCallSpecifying(name: "emotion_simulator")
                 );
 
-            Debug.Log($"Result:\nname:{result.Choices[0].Message.FunctionCall?.Name}, arguments:{result.Choices[0].Message.FunctionCall?.Arguments}");
+            Debug.Log($"Result:\nname:{result.Choices[0].Message.FunctionCall?.Name},\narguments:{result.Choices[0].Message.FunctionCall?.Arguments}");
         }
     }
 }
