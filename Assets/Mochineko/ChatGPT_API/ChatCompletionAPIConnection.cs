@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Mochineko.ChatGPT_API
 {
@@ -55,10 +56,14 @@ namespace Mochineko.ChatGPT_API
 
         /// <summary>
         /// Completes chat though ChatGPT chat completion API.
+        /// https://platform.openai.com/docs/api-reference/chat/create
         /// </summary>
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="model"></param>
+        /// <param name="functions"></param>
+        /// <param name="functionCallString"></param>
+        /// <param name="functionCallSpecifying"></param>
         /// <param name="temperature"></param>
         /// <param name="topP"></param>
         /// <param name="n"></param>
@@ -71,6 +76,7 @@ namespace Mochineko.ChatGPT_API
         /// <param name="user"></param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
         /// <exception cref="Exception">System exceptions</exception>
+        /// <exception cref="ArgumentException"></exception>
         /// <exception cref="APIErrorException">API error response</exception>
         /// <exception cref="HttpRequestException">Network error</exception>
         /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
@@ -79,6 +85,9 @@ namespace Mochineko.ChatGPT_API
              string content,
              CancellationToken cancellationToken,
              Model model = Model.Turbo,
+             IReadOnlyList<Function>? functions = null,
+             string? functionCallString = null,
+             FunctionCallSpecifying? functionCallSpecifying = null,
              float? temperature = null,
              float? topP = null,
              uint? n = null,
@@ -92,27 +101,72 @@ namespace Mochineko.ChatGPT_API
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (functionCallString != null && functionCallSpecifying != null)
+            {
+                throw new ArgumentException($"You can use only one of {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
+            }
+            
             // Record user message
             await chatMemory.AddMessageAsync(
                 new Message(Role.User, content),
                 cancellationToken);
 
             // Create request body
-            var requestBody = new ChatCompletionRequestBody(
-                model.ToText(),
-                chatMemory.Messages,
-                functions: null,
-                functionCallString: null,
-                temperature,
-                topP,
-                n,
-                stream,
-                stop,
-                maxTokens,
-                presencePenalty,
-                frequencyPenalty,
-                logitBias,
-                user);
+            ChatCompletionRequestBody requestBody;
+            if (functionCallString != null)
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallString: functionCallString,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
+            else if (functionCallSpecifying != null)
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallSpecifying: functionCallSpecifying,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
+            else
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallString: null,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
@@ -147,6 +201,8 @@ namespace Mochineko.ChatGPT_API
             {
                 throw new Exception($"[ChatGPT_API] Response JSON is null or empty.");
             }
+            
+            Debug.Log($"JSON:\n{responseJson}");
 
             // Succeeded
             if (responseMessage.IsSuccessStatusCode)
@@ -191,10 +247,14 @@ namespace Mochineko.ChatGPT_API
         
         /// <summary>
         /// Completes chat as <see cref="Stream"/> though ChatGPT chat completion API.
+        /// https://platform.openai.com/docs/api-reference/chat/create
         /// </summary>
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="model"></param>
+        /// <param name="functions"></param>
+        /// <param name="functionCallString"></param>
+        /// <param name="functionCallSpecifying"></param>
         /// <param name="temperature"></param>
         /// <param name="topP"></param>
         /// <param name="n"></param>
@@ -215,6 +275,9 @@ namespace Mochineko.ChatGPT_API
              string content,
              CancellationToken cancellationToken,
              Model model = Model.Turbo,
+             IReadOnlyList<Function>? functions = null,
+             string? functionCallString = null,
+             FunctionCallSpecifying? functionCallSpecifying = null,
              float? temperature = null,
              float? topP = null,
              uint? n = null,
@@ -228,27 +291,72 @@ namespace Mochineko.ChatGPT_API
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (functionCallString != null && functionCallSpecifying != null)
+            {
+                throw new ArgumentException($"You can use only one of {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
+            }
+            
             // Record user message
             await chatMemory.AddMessageAsync(
                 new Message(Role.User, content),
                 cancellationToken);
 
             // Create request body
-            var requestBody = new ChatCompletionRequestBody(
-                model.ToText(),
-                chatMemory.Messages,
-                functions: null,
-                functionCallString: null,
-                temperature,
-                topP,
-                n,
-                stream,
-                stop,
-                maxTokens,
-                presencePenalty,
-                frequencyPenalty,
-                logitBias,
-                user);
+            ChatCompletionRequestBody requestBody;
+            if (functionCallString != null)
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallString: functionCallString,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
+            else if (functionCallSpecifying != null)
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallSpecifying: functionCallSpecifying,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
+            else
+            {
+                requestBody = new ChatCompletionRequestBody(
+                    model.ToText(),
+                    chatMemory.Messages,
+                    functions,
+                    functionCallString: null,
+                    temperature,
+                    topP,
+                    n,
+                    stream,
+                    stop,
+                    maxTokens,
+                    presencePenalty,
+                    frequencyPenalty,
+                    logitBias,
+                    user);
+            }
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
