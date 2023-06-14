@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -136,37 +137,6 @@ namespace Mochineko.ChatGPT_API
             IReadOnlyList<Message> messages,
             IReadOnlyList<Function>? functions = null,
             string? functionCallString = null,
-            float? temperature = 1f,
-            float? topP = 1f,
-            uint? n = 1,
-            bool? stream = false,
-            string[]? stop = null,
-            int? maxTokens = null,
-            float? presencePenalty = 0f,
-            float? frequencyPenalty = 0f,
-            Dictionary<int, int>? logitBias = null,
-            string? user = null)
-        {
-            this.Model = model;
-            this.Messages = messages;
-            this.Functions = functions;
-            this.FunctionCall = functionCallString;
-            this.Temperature = temperature;
-            this.TopP = topP;
-            this.N = n;
-            this.Stream = stream;
-            this.Stop = stop;
-            this.MaxTokens = maxTokens;
-            this.PresencePenalty = presencePenalty;
-            this.FrequencyPenalty = frequencyPenalty;
-            this.LogitBias = logitBias;
-            this.User = user;
-        }
-
-        public ChatCompletionRequestBody(
-            string model,
-            IReadOnlyList<Message> messages,
-            IReadOnlyList<Function>? functions = null,
             FunctionCallSpecifying? functionCallSpecifying = null,
             float? temperature = 1f,
             float? topP = 1f,
@@ -182,7 +152,24 @@ namespace Mochineko.ChatGPT_API
             this.Model = model;
             this.Messages = messages;
             this.Functions = functions;
-            this.FunctionCall = functionCallSpecifying;
+
+            if (functionCallString != null && functionCallSpecifying != null)
+            {
+                throw new ArgumentException($"Cannot specify both {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
+            }
+            if (functionCallString != null)
+            {
+                this.FunctionCall = functionCallString;
+            }
+            else if (functionCallSpecifying != null)
+            {
+                this.FunctionCall = functionCallSpecifying;
+            }
+            else
+            {
+                this.FunctionCall = null;
+            }
+            
             this.Temperature = temperature;
             this.TopP = topP;
             this.N = n;
@@ -194,7 +181,7 @@ namespace Mochineko.ChatGPT_API
             this.LogitBias = logitBias;
             this.User = user;
         }
-        
+
         public string ToJson()
             => JsonConvert.SerializeObject(
                 this,

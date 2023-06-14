@@ -101,72 +101,28 @@ namespace Mochineko.ChatGPT_API
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (functionCallString != null && functionCallSpecifying != null)
-            {
-                throw new ArgumentException($"You can use only one of {nameof(functionCallString)} and {nameof(functionCallSpecifying)}.");
-            }
-            
             // Record user message
             await chatMemory.AddMessageAsync(
                 new Message(Role.User, content),
                 cancellationToken);
 
             // Create request body
-            ChatCompletionRequestBody requestBody;
-            if (functionCallString != null)
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallString: functionCallString,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
-            else if (functionCallSpecifying != null)
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallSpecifying: functionCallSpecifying,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
-            else
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallString: null,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
+            var requestBody = new ChatCompletionRequestBody(
+                model.ToText(),
+                chatMemory.Messages,
+                functions,
+                functionCallString,
+                functionCallSpecifying,
+                temperature,
+                topP,
+                n,
+                stream,
+                stop,
+                maxTokens,
+                presencePenalty,
+                frequencyPenalty,
+                logitBias,
+                user);
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
@@ -302,61 +258,22 @@ namespace Mochineko.ChatGPT_API
                 cancellationToken);
 
             // Create request body
-            ChatCompletionRequestBody requestBody;
-            if (functionCallString != null)
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallString: functionCallString,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
-            else if (functionCallSpecifying != null)
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallSpecifying: functionCallSpecifying,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
-            else
-            {
-                requestBody = new ChatCompletionRequestBody(
-                    model.ToText(),
-                    chatMemory.Messages,
-                    functions,
-                    functionCallString: null,
-                    temperature,
-                    topP,
-                    n,
-                    stream,
-                    stop,
-                    maxTokens,
-                    presencePenalty,
-                    frequencyPenalty,
-                    logitBias,
-                    user);
-            }
+            var requestBody = new ChatCompletionRequestBody(
+                model.ToText(),
+                chatMemory.Messages,
+                functions,
+                functionCallString,
+                functionCallSpecifying,
+                temperature,
+                topP,
+                n,
+                stream,
+                stop,
+                maxTokens,
+                presencePenalty,
+                frequencyPenalty,
+                logitBias,
+                user);
 
             // Build request message
             using var requestMessage = new HttpRequestMessage(
