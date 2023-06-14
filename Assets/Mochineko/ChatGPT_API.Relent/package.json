@@ -1,11 +1,17 @@
 {
   "name": "com.mochineko.chatgpt-api.relent",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "displayName": "ChatGPT API / Relent",
   "description": "ChatGPT API implementation by Relent.",
   "unity": "2021.3",
   "author": {
     "name": "Mochineko",
     "email": "t.o.e.4315@gmail.com"
+  },
+  "dependencies": {
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.6.0",
+    "com.mochineko.relent": "https://github.com/mochi-neko/Relent.git?path=/Assets/Mochineko/Relent#0.2.0",
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
   }
 }

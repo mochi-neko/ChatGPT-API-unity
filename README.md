@@ -1,26 +1,21 @@
 # ChatGPT-API-unity
 
-Binds [ChatGPT chat completion API](https://platform.openai.com/docs/api-reference/chat/create) to pure C# on Unity.
+A client library of [ChatGPT chat completion API](https://platform.openai.com/docs/api-reference/chat/create) for Unity.
 
-See also [official document](https://platform.openai.com/docs/guides/chat).
+See also official [document](https://platform.openai.com/docs/guides/chat) and [API reference](https://platform.openai.com/docs/api-reference/chat).
 
-## How to import by UnityPackageManager
+## How to import by Unity Package Manager
 
-Add dependencies:
+Add following dependencies to your `/Packages/mainfest.json`.
 
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.5.0",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.6.0",
     ...
   }
 }
 ```
-
-to your `mainfest.json`.
-
-If you have already used Newtonsoft.Json on your project, remove dependency:`"com.unity.nuget.newtonsoft-json": "3.0.2",`.
 
 ## How to use chat completion by ChatGPT API
 
@@ -142,20 +137,7 @@ namespace Mochineko.ChatGPT_API.Samples
 }
 ```
 
-NOTICE that this sample requres these dependencies:
-
-```json
-{
-  "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.5.0",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
-    ...
-  }
-}
-```
-
-See also [Sample](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
+See also [Sample](./Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionSample.cs).
 
 ## How to use chat completion by ChatGPT API more resilient
 
@@ -167,10 +149,7 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.5.0",
-    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.5.0",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.6.0",
     ...
   }
 }
@@ -216,14 +195,23 @@ Presets are available:
 - `FiniteTokenLengthQueueWithFixedPromptsChatMemory`
   - A queue that has max number of token lenght of user/assistant messages and free number of prompts (system messages).
 
+## How to use function calling
+
+1. Define function with JSON schema.
+2. Specify function by request parameters.
+3. Call chat completion API.
+4. Use `result.Choices[0].Message.FunctionCall` 
+
+See `FunctionCalling()` in [test code](./Assets/Mochineko/ChatGPT_API.Tests/ChatCompletionAPIConnectionTest.cs).
+
 ## Changelog
 
-See [CHANGELOG](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/CHANGELOG.md).
+See [CHANGELOG](./CHANGELOG.md).
 
 ## 3rd Party Notices
 
-See [NOTICE](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/NOTICE.md).
+See [NOTICE](./NOTICE.md).
 
 ## License
 
-Licensed under the [MIT](https://github.com/mochi-neko/ChatGPT-API-unity/blob/main/LICENSE) license.
+Licensed under the [MIT](./LICENSE) license.

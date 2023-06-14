@@ -1,11 +1,14 @@
 {
   "name": "com.mochineko.chatgpt-api",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "displayName": "ChatGPT API",
   "description": "ChatGPT chat completion API bindings to pure C#.",
   "unity": "2021.3",
   "author": {
     "name": "Mochineko",
     "email": "t.o.e.4315@gmail.com"
+  },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.2"
   }
 }

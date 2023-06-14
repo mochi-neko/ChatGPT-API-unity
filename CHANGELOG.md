@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
 
+## [0.6.0] - 2023-06-14
+
+### Added
+
+- Add 16k context turbo model option.
+- Add function calling support.
+- Add optional `name` property to `Message`.
+- Add verbose log option.
+
+## Changed
+
+- Update chat models at 2023-06-13.
+- Add dependencies to `package.json`.
+
 ## [0.5.0] - 2023-04-08
 
 ### Changed
