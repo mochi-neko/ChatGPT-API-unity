@@ -7,6 +7,11 @@ namespace Mochineko.ChatGPT_API
     public sealed class FunctionCallSpecifying
     {
         [JsonProperty("name"), JsonRequired]
-        public string Name { get; private set; } = string.Empty;
+        public string Name { get; private set; }
+        
+        public FunctionCallSpecifying(string name)
+        {
+            this.Name = name;
+        }
     }
 }

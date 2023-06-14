@@ -43,15 +43,7 @@ namespace Mochineko.ChatGPT_API
         /// "auto" is the default if functions are present.
         /// </summary>
         [JsonProperty("function_call")]
-        public string? FunctionCallString { get; }
-        
-        /// <summary>
-        /// [Optional] Defaults to "auto".
-        /// Controls how the model responds to function calls.
-        /// Specifying a particular function via {"name":\ "my_function"} forces the model to call that function.
-        /// </summary>
-        [JsonProperty("function_call")]
-        public FunctionCallSpecifying? FunctionCallSpecifying { get; }
+        public object? FunctionCall { get; }
 
         /// <summary>
         /// [Optional] Defaults to 1.
@@ -158,7 +150,7 @@ namespace Mochineko.ChatGPT_API
             this.Model = model;
             this.Messages = messages;
             this.Functions = functions;
-            this.FunctionCallString = functionCallString;
+            this.FunctionCall = functionCallString;
             this.Temperature = temperature;
             this.TopP = topP;
             this.N = n;
@@ -190,7 +182,7 @@ namespace Mochineko.ChatGPT_API
             this.Model = model;
             this.Messages = messages;
             this.Functions = functions;
-            this.FunctionCallSpecifying = functionCallSpecifying;
+            this.FunctionCall = functionCallSpecifying;
             this.Temperature = temperature;
             this.TopP = topP;
             this.N = n;
@@ -209,7 +201,7 @@ namespace Mochineko.ChatGPT_API
                 Formatting.Indented,
                 new JsonSerializerSettings
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
                 });
 
         public static ChatCompletionRequestBody? FromJson(string json)
