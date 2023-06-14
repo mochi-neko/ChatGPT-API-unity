@@ -27,6 +27,33 @@ namespace Mochineko.ChatGPT_API
         public IReadOnlyList<Message> Messages { get; }
 
         /// <summary>
+        /// [Optional] Defaults to null.
+        /// A list of functions the model may generate JSON inputs for.
+        /// </summary>
+        [JsonProperty("functions")]
+        public IReadOnlyList<Function>? Functions { get; }
+        
+        /// <summary>
+        /// [Optional] Defaults to "auto".
+        /// Controls how the model responds to function calls.
+        /// "none" means the model does not call a function, and responds to the end-user.
+        /// "auto" means the model can pick between an end-user or calling a function.
+        /// Specifying a particular function via {"name":\ "my_function"} forces the model to call that function.
+        /// "none" is the default when no functions are present.
+        /// "auto" is the default if functions are present.
+        /// </summary>
+        [JsonProperty("function_call")]
+        public string? FunctionCallString { get; }
+        
+        /// <summary>
+        /// [Optional] Defaults to "auto".
+        /// Controls how the model responds to function calls.
+        /// Specifying a particular function via {"name":\ "my_function"} forces the model to call that function.
+        /// </summary>
+        [JsonProperty("function_call")]
+        public FunctionCallSpecifying? FunctionCallSpecifying { get; }
+
+        /// <summary>
         /// [Optional] Defaults to 1.
         /// What sampling temperature to use, between 0 and 2.
         /// Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
@@ -112,15 +139,11 @@ namespace Mochineko.ChatGPT_API
         [JsonProperty("user")]
         public string? User { get; }
 
-        public ChatCompletionRequestBody(Model model, List<Message> messages)
-        {
-            this.Model = model.ToText();
-            this.Messages = messages;
-        }
-
         public ChatCompletionRequestBody(
             string model,
             IReadOnlyList<Message> messages,
+            IReadOnlyList<Function>? functions = null,
+            string? functionCallString = null,
             float? temperature = 1f,
             float? topP = 1f,
             uint? n = 1,
@@ -132,20 +155,54 @@ namespace Mochineko.ChatGPT_API
             Dictionary<int, int>? logitBias = null,
             string? user = null)
         {
-            Model = model;
-            Messages = messages;
-            Temperature = temperature;
-            TopP = topP;
-            N = n;
-            Stream = stream;
-            Stop = stop;
-            MaxTokens = maxTokens;
-            PresencePenalty = presencePenalty;
-            FrequencyPenalty = frequencyPenalty;
-            LogitBias = logitBias;
-            User = user;
+            this.Model = model;
+            this.Messages = messages;
+            this.Functions = functions;
+            this.FunctionCallString = functionCallString;
+            this.Temperature = temperature;
+            this.TopP = topP;
+            this.N = n;
+            this.Stream = stream;
+            this.Stop = stop;
+            this.MaxTokens = maxTokens;
+            this.PresencePenalty = presencePenalty;
+            this.FrequencyPenalty = frequencyPenalty;
+            this.LogitBias = logitBias;
+            this.User = user;
         }
 
+        public ChatCompletionRequestBody(
+            string model,
+            IReadOnlyList<Message> messages,
+            IReadOnlyList<Function>? functions = null,
+            FunctionCallSpecifying? functionCallSpecifying = null,
+            float? temperature = 1f,
+            float? topP = 1f,
+            uint? n = 1,
+            bool? stream = false,
+            string[]? stop = null,
+            int? maxTokens = null,
+            float? presencePenalty = 0f,
+            float? frequencyPenalty = 0f,
+            Dictionary<int, int>? logitBias = null,
+            string? user = null)
+        {
+            this.Model = model;
+            this.Messages = messages;
+            this.Functions = functions;
+            this.FunctionCallSpecifying = functionCallSpecifying;
+            this.Temperature = temperature;
+            this.TopP = topP;
+            this.N = n;
+            this.Stream = stream;
+            this.Stop = stop;
+            this.MaxTokens = maxTokens;
+            this.PresencePenalty = presencePenalty;
+            this.FrequencyPenalty = frequencyPenalty;
+            this.LogitBias = logitBias;
+            this.User = user;
+        }
+        
         public string ToJson()
             => JsonConvert.SerializeObject(
                 this,

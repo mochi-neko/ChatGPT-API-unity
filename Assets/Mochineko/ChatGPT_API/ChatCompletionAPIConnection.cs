@@ -101,6 +101,8 @@ namespace Mochineko.ChatGPT_API
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
                 chatMemory.Messages,
+                functions: null,
+                functionCallString: null,
                 temperature,
                 topP,
                 n,
@@ -235,6 +237,8 @@ namespace Mochineko.ChatGPT_API
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
                 chatMemory.Messages,
+                functions: null,
+                functionCallString: null,
                 temperature,
                 topP,
                 n,
