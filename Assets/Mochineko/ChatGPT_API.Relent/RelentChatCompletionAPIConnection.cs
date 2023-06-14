@@ -61,6 +61,9 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="model"></param>
+        /// <param name="functions"></param>
+        /// <param name="functionCallString"></param>
+        /// <param name="functionCallSpecifying"></param>
         /// <param name="temperature"></param>
         /// <param name="topP"></param>
         /// <param name="n"></param>
@@ -76,6 +79,9 @@ namespace Mochineko.ChatGPT_API.Relent
             string content,
             CancellationToken cancellationToken,
             Model model = Model.Turbo,
+            IReadOnlyList<Function>? functions = null,
+            string? functionCallString = null,
+            FunctionCallSpecifying? functionCallSpecifying = null,
             float? temperature = null,
             float? topP = null,
             uint? n = null,
@@ -116,8 +122,9 @@ namespace Mochineko.ChatGPT_API.Relent
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
                 chatMemory.Messages,
-                functions: null,
-                functionCallString: null,
+                functions,
+                functionCallString,
+                functionCallSpecifying,
                 temperature,
                 topP,
                 n,
@@ -273,6 +280,9 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="content">Message content to send ChatGPT API</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="model"></param>
+        /// <param name="functions"></param>
+        /// <param name="functionCallString"></param>
+        /// <param name="functionCallSpecifying"></param>
         /// <param name="temperature"></param>
         /// <param name="topP"></param>
         /// <param name="n"></param>
@@ -288,6 +298,9 @@ namespace Mochineko.ChatGPT_API.Relent
             string content,
             CancellationToken cancellationToken,
             Model model = Model.Turbo,
+            IReadOnlyList<Function>? functions = null,
+            string? functionCallString = null,
+            FunctionCallSpecifying? functionCallSpecifying = null,
             float? temperature = null,
             float? topP = null,
             uint? n = null,
@@ -328,8 +341,9 @@ namespace Mochineko.ChatGPT_API.Relent
             var requestBody = new ChatCompletionRequestBody(
                 model.ToText(),
                 chatMemory.Messages,
-                functions: null,
-                functionCallString: null,
+                functions,
+                functionCallString,
+                functionCallSpecifying,
                 temperature,
                 topP,
                 n,
