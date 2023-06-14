@@ -77,7 +77,7 @@ namespace Mochineko.ChatGPT_API.Tests
                 "Mochineko/ChatGPT_API.Tests/OpenAI_API_Key.txt");
 
             var apiKey = await File.ReadAllTextAsync(apiKeyPath);
-            
+
             var connection = new ChatCompletionAPIConnection(apiKey);
 
             Func<Task> send = async () => await connection.CompleteChatAsync(
@@ -108,6 +108,59 @@ namespace Mochineko.ChatGPT_API.Tests
             Func<Task> send = async () => await connection.CompleteChatAsync("a", CancellationToken.None);
 
             await send.Should().ThrowAsync<APIErrorException>(because: "Invalid API key.");
+        }
+
+        [Test]
+        [RequiresPlayMode(false)]
+        public async Task FunctionCalling()
+        {
+            // This file is a target of .gitignore.
+            var apiKeyPath = Path.Combine(
+                Application.dataPath,
+                "Mochineko/ChatGPT_API.Tests/OpenAI_API_Key.txt");
+
+            var apiKey = await File.ReadAllTextAsync(apiKeyPath);
+
+            var connection = new ChatCompletionAPIConnection(apiKey);
+
+            var function = new Function
+            (
+                name: "emotion_simulator",
+                description: "Simulate emotion of the assistant as human.",
+                parameters: new Dictionary<string, object>
+                {
+                    { "type", "object" },
+                    {
+                        "properties", new Dictionary<string, object>
+                        {
+                            {
+                                "emotion", new Dictionary<string, object>
+                                {
+                                    { "type", "string" },
+                                    {
+                                        "enum", new List<string>
+                                        {
+                                            "neutral", "happy", "sad", "angry", "surprised", "disgusted", "fearful"
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                    },
+                    { "required", new List<string> { "emotion" } },
+                }
+            );
+
+            var result = await connection
+                .CompleteChatAsync(
+                    "Please tell me about yourself.",
+                    CancellationToken.None,
+                    model: Model.Turbo0613,
+                    functions: new List<Function> { function },
+                    functionCallSpecifying: new FunctionCallSpecifying(name: "emotion_simulator")
+                );
+
+            Debug.Log($"Result:\nname:{result.Choices[0].Message.FunctionCall?.Name}, arguments:{result.Choices[0].Message.FunctionCall?.Arguments}");
         }
     }
 }
