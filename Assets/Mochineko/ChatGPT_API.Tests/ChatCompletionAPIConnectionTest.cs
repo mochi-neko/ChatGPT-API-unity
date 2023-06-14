@@ -51,7 +51,7 @@ namespace Mochineko.ChatGPT_API.Tests
             var result = await connection.CompleteChatAsync(
                 message,
                 CancellationToken.None,
-                model: Model.Turbo0301,
+                model: Model.Turbo,
                 temperature: 1f,
                 topP: 1f,
                 n: 1,

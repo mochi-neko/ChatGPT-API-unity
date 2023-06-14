@@ -10,6 +10,7 @@ namespace Mochineko.ChatGPT_API
             [Role.System] = "system",
             [Role.Assistant] = "assistant",
             [Role.User] = "user",
+            [Role.Function] = "function",
         };
 
         public static Role ToRole(this string role)

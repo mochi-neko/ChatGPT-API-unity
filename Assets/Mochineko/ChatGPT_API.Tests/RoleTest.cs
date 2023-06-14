@@ -11,6 +11,7 @@ namespace Mochineko.ChatGPT_API.Tests
         [TestCase(Role.System, "system")]
         [TestCase(Role.Assistant, "assistant")]
         [TestCase(Role.User, "user")]
+        [TestCase(Role.Function, "function")]
         [RequiresPlayMode(false)]
         public void Resolve(Role role, string roleText)
         {
