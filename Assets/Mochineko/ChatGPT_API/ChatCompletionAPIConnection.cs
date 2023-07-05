@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -215,7 +216,7 @@ namespace Mochineko.ChatGPT_API
         }
 
         /// <summary>
-        /// Completes chat as <see cref="Stream"/> though ChatGPT chat completion API.
+        /// Completes chat as <see cref="IAsyncEnumerable{T}"/> of <see cref="ChatCompletionStreamResponseChunk"/> though server-sent event of ChatGPT chat completion API.
         /// https://platform.openai.com/docs/api-reference/chat/create
         /// </summary>
         /// <param name="content">Message content to send ChatGPT API</param>
@@ -227,7 +228,6 @@ namespace Mochineko.ChatGPT_API
         /// <param name="temperature"></param>
         /// <param name="topP"></param>
         /// <param name="n"></param>
-        /// <param name="stream"></param>
         /// <param name="stop"></param>
         /// <param name="maxTokens"></param>
         /// <param name="presencePenalty"></param>
@@ -235,30 +235,30 @@ namespace Mochineko.ChatGPT_API
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
         /// <param name="verbose"></param>
-        /// <returns>Response stream from ChatGPT chat completion API.</returns>
+        /// <returns>Response async enumerable of chunk from ChatGPT chat completion API.</returns>
         /// <exception cref="Exception">System exceptions</exception>
         /// <exception cref="APIErrorException">API error response</exception>
         /// <exception cref="HttpRequestException">Network error</exception>
         /// <exception cref="TaskCanceledException">Cancellation or timeout</exception>
         /// <exception cref="JsonSerializationException">JSON error</exception>
-        public async Task<Stream> CompleteChatAsStreamAsync(
-            string content,
-            CancellationToken cancellationToken,
-            Model model = Model.Turbo,
-            IReadOnlyList<Function>? functions = null,
-            string? functionCallString = null,
-            FunctionCallSpecifying? functionCallSpecifying = null,
-            float? temperature = null,
-            float? topP = null,
-            uint? n = null,
-            bool? stream = null,
-            string[]? stop = null,
-            int? maxTokens = null,
-            float? presencePenalty = null,
-            float? frequencyPenalty = null,
-            Dictionary<int, int>? logitBias = null,
-            string? user = null,
-            bool verbose = false)
+        public async Task<IAsyncEnumerable<ChatCompletionStreamResponseChunk>>
+            CompleteChatAsStreamAsync(
+                string content,
+                CancellationToken cancellationToken,
+                Model model = Model.Turbo,
+                IReadOnlyList<Function>? functions = null,
+                string? functionCallString = null,
+                FunctionCallSpecifying? functionCallSpecifying = null,
+                float? temperature = null,
+                float? topP = null,
+                uint? n = null,
+                string[]? stop = null,
+                int? maxTokens = null,
+                float? presencePenalty = null,
+                float? frequencyPenalty = null,
+                Dictionary<int, int>? logitBias = null,
+                string? user = null,
+                bool verbose = false)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -283,7 +283,7 @@ namespace Mochineko.ChatGPT_API
                 temperature,
                 topP,
                 n,
-                stream,
+                stream: true, // NOTE: Always true
                 stop,
                 maxTokens,
                 presencePenalty,
@@ -312,8 +312,11 @@ namespace Mochineko.ChatGPT_API
 
             // Post request and receive response
             // NOTE: Can throw exceptions
-            using var responseMessage = await httpClient
-                .SendAsync(requestMessage, cancellationToken);
+            var responseMessage = await httpClient
+                .SendAsync(
+                    requestMessage,
+                    HttpCompletionOption.ResponseHeadersRead, // NOTE: To read as stream immediately
+                    cancellationToken);
 
             if (responseMessage == null)
             {
@@ -334,7 +337,10 @@ namespace Mochineko.ChatGPT_API
             // Succeeded
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsStreamAsync();
+                var stream = await responseMessage.Content.ReadAsStreamAsync();
+
+                // Convert stream to async enumerable
+                return ReadChunkAsAsyncEnumerable(stream, cancellationToken, verbose);
             }
             // Failed
             else
@@ -356,6 +362,56 @@ namespace Mochineko.ChatGPT_API
 
                 throw new Exception(
                     $"[ChatGPT_API] System error with status code:{responseMessage.StatusCode}, message:{responseJson}");
+            }
+        }
+
+        private static async IAsyncEnumerable<ChatCompletionStreamResponseChunk> ReadChunkAsAsyncEnumerable(
+            Stream stream,
+            [EnumeratorCancellation] CancellationToken cancellationToken,
+            bool verbose)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                using var reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+                while (!reader.EndOfStream || !cancellationToken.IsCancellationRequested)
+                {
+                    var line = await reader.ReadLineAsync();
+                    if (verbose)
+                    {
+                        Debug.Log($"[ChatGPT_API] Response delta : {line}");
+                    }
+                    
+                    if (string.IsNullOrEmpty(line) || string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    var formatted = line.TrimStart("data: ".ToCharArray());
+                    if (string.IsNullOrEmpty(formatted))
+                    {
+                        continue;
+                    }
+
+                    // Finished
+                    if (formatted == "[DONE]")
+                    {
+                        break;
+                    }
+                    
+                    var chunk = ChatCompletionStreamResponseChunk.FromJson(formatted);
+                    if (chunk is null)
+                    {
+                        throw new Exception($"[ChatGPT_API] Response delta JSON is null or empty.");
+                    }
+
+                    yield return chunk;
+                }
+            }
+            finally
+            {
+                await stream.DisposeAsync();   
             }
         }
     }
