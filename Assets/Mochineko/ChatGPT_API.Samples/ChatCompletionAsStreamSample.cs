@@ -90,20 +90,20 @@ namespace Mochineko.ChatGPT_API.Samples
 
                 await foreach (var chunk in enumerable.WithCancellation(cancellationToken))
                 {
-                    // First response contains only "role" element.
+                    // First chunk has only "role" element.
                     if (chunk.Choices[0].Delta.Content is null)
                     {
+                        Debug.Log($"[ChatGPT_API.Samples] Role:{chunk.Choices[0].Delta.Role}.");
                         continue;
                     }
                     
                     var delta = chunk.Choices[0].Delta.Content;
                     builder.Append(delta);
-                    // Log chat delta.
-                    Debug.Log($"[ChatGPT_API.Samples] Delta:{delta}, Total:{builder}");
+                    Debug.Log($"[ChatGPT_API.Samples] Delta:{delta}, Current:{builder}");
                 }
                 
                 // Log chat completion result.
-                Debug.Log($"[ChatGPT_API.Samples] Total result:\n{builder}");
+                Debug.Log($"[ChatGPT_API.Samples] Completed: \n{builder}");
             }
             catch (Exception e)
             {

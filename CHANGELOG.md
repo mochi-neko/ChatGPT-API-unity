@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added 
+## [0.7.0] - 2023-07-05
 
-- Add [moderation layer](https://platform.openai.com/docs/guides/chat/adding-a-moderation-layer)
+### Added
+
+- Add Streaming API sample.
+
+### Changed
+
+- Change streaming API to use `IAsyncEnumerable`.
+- Change to `UniTask` from `Task` in Relent API.
 
 ## [0.6.0] - 2023-06-14
 

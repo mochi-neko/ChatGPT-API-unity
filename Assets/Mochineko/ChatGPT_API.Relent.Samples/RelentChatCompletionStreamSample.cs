@@ -155,8 +155,14 @@ namespace Mochineko.ChatGPT_API.Relent.Samples
                     await foreach (var chunk in success.Result.WithCancellation(cancellationToken))
                     {
                         var delta = chunk.Choices[0].Delta.Content;
+                        if (delta == null)
+                        {
+                            // First chunk has only "role" element.
+                            Debug.Log($"[ChatGPT_API.Relent.Samples] Role: {chunk.Choices[0].Delta.Role}.");
+                            continue;
+                        }
+                            
                         builder.Append(delta);
-                        
                         Debug.Log($"[ChatGPT_API.Relent.Samples] Delta: {delta}, Current: {builder}");
                     }
                     Debug.Log($"[ChatGPT_API.Relent.Samples] Completed chat -> {builder}");

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Mochineko.Relent.Result;
 using Mochineko.Relent.UncertainResult;
 using UnityEngine;
@@ -78,7 +79,7 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="user"></param>
         /// <param name="verbose"></param>
         /// <returns>Response from ChatGPT chat completion API.</returns>
-        public async Task<IUncertainResult<ChatCompletionResponseBody>> CompleteChatAsync(
+        public async UniTask<IUncertainResult<ChatCompletionResponseBody>> CompleteChatAsync(
             string content,
             CancellationToken cancellationToken,
             Model model = Model.Turbo,
@@ -315,8 +316,8 @@ namespace Mochineko.ChatGPT_API.Relent
         /// <param name="logitBias"></param>
         /// <param name="user"></param>
         /// <param name="verbose"></param>
-        /// <returns>Response from ChatGPT chat completion API.</returns>
-        public async Task<IUncertainResult<IAsyncEnumerable<ChatCompletionStreamResponseChunk>>>
+        /// <returns>Response from ChatGPT chat completion API as async enumerable.</returns>
+        public async UniTask<IUncertainResult<IAsyncEnumerable<ChatCompletionStreamResponseChunk>>>
             CompleteChatAsStreamAsync(
                 string content,
                 CancellationToken cancellationToken,
@@ -534,16 +535,7 @@ namespace Mochineko.ChatGPT_API.Relent
                     switch (deserializeResult)
                     {
                         case ISuccessResult<ChatCompletionStreamResponseChunk> deserializeSuccess:
-                            var delta = deserializeSuccess.Result.Choices[0].Delta.Content;
-                            if (delta is not null)
-                            {
-                                yield return deserializeSuccess.Result;
-                            }
-                            else
-                            {
-                                continue;
-                            }
-
+                            yield return deserializeSuccess.Result;
                             break;
 
                         case IFailureResult<ChatCompletionStreamResponseChunk>:

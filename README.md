@@ -11,7 +11,7 @@ Add following dependencies to your `/Packages/mainfest.json`.
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.6.0",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.7.0",
     ...
   }
 }
@@ -149,7 +149,7 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.6.0",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.7.0",
     ...
   }
 }
@@ -194,6 +194,38 @@ Presets are available:
   - A queue that has max number of token lenght of all messages.
 - `FiniteTokenLengthQueueWithFixedPromptsChatMemory`
   - A queue that has max number of token lenght of user/assistant messages and free number of prompts (system messages).
+
+## How to stream response
+
+See [streaming sample](./Assets/Mochineko/ChatGPT_API.Samples/ChatCompletionAsStreamSample.cs).
+
+You can await foreach as follows:
+
+```csharp
+var builder = new StringBuilder();
+ // Receive enumerable from ChatGPT chat completion API.
+var enumerable = await connection.CompleteChatAsStreamAsync(
+    message,
+    cancellationToken);
+
+await foreach (var chunk in enumerable.WithCancellation(cancellationToken))
+{
+    // First chunk has only "role" element.
+    if (chunk.Choices[0].Delta.Content is null)
+    {
+        Debug.Log($"[ChatGPT_API.Samples] Role:{chunk.Choices[0].Delta.Role}.");
+        continue;
+    }
+    
+    var delta = chunk.Choices[0].Delta.Content;
+    builder.Append(delta);
+    Debug.Log($"[ChatGPT_API.Samples] Delta:{delta}, Current:{builder}");
+}
+
+// Log chat completion result.
+Debug.Log($"[ChatGPT_API.Samples] Completed: \n{builder}");
+```
+.
 
 ## How to use function calling
 
