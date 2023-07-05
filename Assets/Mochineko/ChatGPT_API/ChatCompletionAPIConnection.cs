@@ -303,7 +303,7 @@ namespace Mochineko.ChatGPT_API
             requestMessage.Headers
                 .Add("Authorization", $"Bearer {apiKey}");
 
-            var requestContent = new StringContent(
+            using var requestContent = new StringContent(
                 content: requestJson,
                 encoding: System.Text.Encoding.UTF8,
                 mediaType: "application/json");
@@ -340,7 +340,7 @@ namespace Mochineko.ChatGPT_API
                 var stream = await responseMessage.Content.ReadAsStreamAsync();
 
                 // Convert stream to async enumerable
-                return ReadChunkAsAsyncEnumerable(stream, cancellationToken, verbose);
+                return ReadChunkAsAsyncEnumerable(stream, cancellationToken, responseMessage, verbose);
             }
             // Failed
             else
@@ -368,6 +368,7 @@ namespace Mochineko.ChatGPT_API
         private static async IAsyncEnumerable<ChatCompletionStreamResponseChunk> ReadChunkAsAsyncEnumerable(
             Stream stream,
             [EnumeratorCancellation] CancellationToken cancellationToken,
+            IDisposable response,
             bool verbose)
         {
             try
@@ -411,7 +412,8 @@ namespace Mochineko.ChatGPT_API
             }
             finally
             {
-                await stream.DisposeAsync();   
+                await stream.DisposeAsync();
+                response.Dispose();
             }
         }
     }

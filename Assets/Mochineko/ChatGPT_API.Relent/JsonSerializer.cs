@@ -109,5 +109,28 @@ namespace Mochineko.ChatGPT_API.Relent
                     $"Failed to deserialize {nameof(ChatCompletionResponseBody)} from JSON because -> {exception}");
             }
         }
+        
+        public static IResult<ChatCompletionStreamResponseChunk> DeserializeRequestChunk(string json)
+        {
+            try
+            {
+                var requestBody = JsonConvert.DeserializeObject<ChatCompletionStreamResponseChunk>(json);
+
+                if (requestBody != null)
+                {
+                    return Results.Succeed(requestBody);
+                }
+                else
+                {
+                    return Results.FailWithTrace<ChatCompletionStreamResponseChunk>(
+                        $"Failed to deserialize because deserialized object of {nameof(ChatCompletionStreamResponseChunk)} was null.");
+                }
+            }
+            catch (JsonException exception)
+            {
+                return Results.FailWithTrace<ChatCompletionStreamResponseChunk>(
+                    $"Failed to deserialize {nameof(ChatCompletionStreamResponseChunk)} from JSON because -> {exception}");
+            }
+        }
     }
 }
