@@ -423,7 +423,10 @@ namespace Mochineko.ChatGPT_API.Relent
             {
                 // Post request and receive response
                 responseMessage = await httpClient
-                    .SendAsync(requestMessage, cancellationToken);
+                    .SendAsync(
+                        requestMessage,
+                        HttpCompletionOption.ResponseHeadersRead, // NOTE: To read as stream immediately
+                        cancellationToken);
 
                 if (responseMessage == null)
                 {

@@ -11,7 +11,7 @@ Add following dependencies to your `/Packages/mainfest.json`.
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.7.0",
+    "com.mochineko.chatgpt-api": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API#0.7.1",
     ...
   }
 }
@@ -149,7 +149,7 @@ You can use API with explicit error handling, retry, timeout, bulkhead, and so o
 ```json
 {
   "dependencies": {
-    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.7.0",
+    "com.mochineko.chatgpt-api.relent": "https://github.com/mochi-neko/ChatGPT-API-unity.git?path=/Assets/Mochineko/ChatGPT_API.Relent#0.7.1",
     ...
   }
 }
