@@ -14,13 +14,13 @@ namespace Mochineko.ChatGPT_API.Samples
     /// </summary>
     public sealed class ChatCompletionAsStreamSample : MonoBehaviour
     {
-        [SerializeField, TextArea]
+        [SerializeField, TextArea(3, 10)]
         private string prompt = string.Empty;
 
         /// <summary>
         /// Message sent to ChatGPT API.
         /// </summary>
-        [SerializeField, TextArea] private string message = string.Empty;
+        [SerializeField, TextArea(3, 10)] private string message = string.Empty;
 
         /// <summary>
         /// Max number of chat memory of queue.
