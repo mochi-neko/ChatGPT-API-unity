@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.7.1] - 2023-07-12
+## [0.7.3] - 2023-07-21
+
+### Fixed
+
+- Fix default path to save PBE file in TikTokenSharp.
+- Fill recorded message content with empty string because messages in request parameter must have content field.
+
+## [0.7.2] - 2023-07-12
 
 ### Fixed
 

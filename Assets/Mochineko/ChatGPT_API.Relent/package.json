@@ -1,6 +1,6 @@
 {
   "name": "com.mochineko.chatgpt-api.relent",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "displayName": "ChatGPT API / Relent",
   "description": "ChatGPT API implementation by Relent.",
   "unity": "2021.3",
