@@ -32,7 +32,7 @@ namespace Mochineko.ChatGPT_API
         /// "content" is required for all messages except assistant messages with function calls.
         /// </summary>
         [JsonProperty("content")]
-        public string? Content { get; private set; }
+        public string? Content { get; internal set; }
         
         /// <summary>
         /// [Optional]

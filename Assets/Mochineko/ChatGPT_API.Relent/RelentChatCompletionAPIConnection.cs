@@ -273,6 +273,12 @@ namespace Mochineko.ChatGPT_API.Relent
                     // Record assistant messages
                     foreach (var choice in responseBody.Choices)
                     {
+                        // NOTE: Fill message content with empty string because messages in request parameter must have content field. 
+                        if (choice.Message.Content is null)
+                        {
+                            choice.Message.Content = string.Empty;
+                        }
+                        
                         await chatMemory.AddMessageAsync(
                             choice.Message,
                             cancellationToken);
