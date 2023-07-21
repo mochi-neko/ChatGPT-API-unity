@@ -70,6 +70,12 @@ namespace Mochineko.ChatGPT_API.Samples
                 Debug.LogError($"[ChatGPT_API.Samples] Connection is null.");
                 return;
             }
+            
+            if (memory == null)
+            {
+                Debug.LogError($"[ChatGPT_API.Samples] Memory is null.");
+                return;
+            }
 
             if (string.IsNullOrEmpty(message))
             {
@@ -101,9 +107,19 @@ namespace Mochineko.ChatGPT_API.Samples
                     builder.Append(delta);
                     Debug.Log($"[ChatGPT_API.Samples] Delta:{delta}, Current:{builder}");
                 }
+
+                var result = builder.ToString();
                 
                 // Log chat completion result.
-                Debug.Log($"[ChatGPT_API.Samples] Completed: \n{builder}");
+                Debug.Log($"[ChatGPT_API.Samples] Completed: \n{result}");
+                
+                // Record result to memory.
+                await memory.AddMessageAsync(new Message(
+                    Role.Assistant,
+                    content: result,
+                    name: null,
+                    functionCall: null),
+                    cancellationToken);
             }
             catch (Exception e)
             {
