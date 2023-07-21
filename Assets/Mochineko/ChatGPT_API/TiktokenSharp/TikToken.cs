@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -8,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TiktokenSharp.Model;
 using TiktokenSharp.Services;
+using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace TiktokenSharp
 {
@@ -17,7 +18,8 @@ namespace TiktokenSharp
         /// <summary>
         /// You can set this item before EncodingForModel to specify the location for storing and downloading the bpe file. If not set, it defaults to the AppContext.BaseDirectory\bpe directory.
         /// </summary>
-        public static string PBEFileDirectory { get; set; } = Path.Combine(AppContext.BaseDirectory, "bpe");
+        // NOTE: Override default path for Unity
+        public static string PBEFileDirectory { get; set; } = Path.Combine(Application.persistentDataPath, "TikToken", "bpe"); // = Path.Combine(AppContext.BaseDirectory, "bpe");
 
         /// <summary>
         /// get encoding
