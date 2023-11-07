@@ -51,7 +51,7 @@ namespace Mochineko.ChatGPT_API.Relent
             if (!string.IsNullOrEmpty(prompt))
             {
                 this.chatMemory.AddMessageAsync(
-                    new Message(Role.System, prompt),
+                    Message.CreateSystemMessage(prompt),
                     CancellationToken.None);
             }
 
@@ -114,7 +114,7 @@ namespace Mochineko.ChatGPT_API.Relent
             try
             {
                 await chatMemory.AddMessageAsync(
-                    new Message(Role.User, content),
+                    Message.CreateUserMessage(content),
                     cancellationToken);
             }
             catch (OperationCanceledException exception)
@@ -212,7 +212,7 @@ namespace Mochineko.ChatGPT_API.Relent
                 return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
                     $"Failed because task was canceled by user during call to the API -> {exception}.");
             }
-            // Operation cancellation 
+            // Operation cancellation
             catch (OperationCanceledException exception)
             {
                 return UncertainResults.RetryWithTrace<ChatCompletionResponseBody>(
@@ -273,12 +273,12 @@ namespace Mochineko.ChatGPT_API.Relent
                     // Record assistant messages
                     foreach (var choice in responseBody.Choices)
                     {
-                        // NOTE: Fill message content with empty string because messages in request parameter must have content field. 
+                        // NOTE: Fill message content with empty string because messages in request parameter must have content field.
                         if (choice.Message.Content is null)
                         {
                             choice.Message.Content = string.Empty;
                         }
-                        
+
                         await chatMemory.AddMessageAsync(
                             choice.Message,
                             cancellationToken);
@@ -358,7 +358,7 @@ namespace Mochineko.ChatGPT_API.Relent
             try
             {
                 await chatMemory.AddMessageAsync(
-                    new Message(Role.User, content),
+                    Message.CreateUserMessage(content),
                     cancellationToken);
             }
             catch (OperationCanceledException exception)
@@ -460,7 +460,7 @@ namespace Mochineko.ChatGPT_API.Relent
                 return UncertainResults.RetryWithTrace<IAsyncEnumerable<ChatCompletionStreamResponseChunk>>(
                     $"Failed because task was canceled by user during call to the API -> {exception}.");
             }
-            // Operation cancellation 
+            // Operation cancellation
             catch (OperationCanceledException exception)
             {
                 return UncertainResults.RetryWithTrace<IAsyncEnumerable<ChatCompletionStreamResponseChunk>>(

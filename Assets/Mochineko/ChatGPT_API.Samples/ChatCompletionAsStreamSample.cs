@@ -55,13 +55,13 @@ namespace Mochineko.ChatGPT_API.Samples
             SendChatAsStreamAsync(this.GetCancellationTokenOnDestroy())
                 .Forget();
         }
-        
+
         [ContextMenu(nameof(ClearChatMemory))]
         public void ClearChatMemory()
         {
             memory?.ClearAllMessages();
         }
-        
+
         private async UniTask SendChatAsStreamAsync(CancellationToken cancellationToken)
         {
             // Validations
@@ -70,7 +70,7 @@ namespace Mochineko.ChatGPT_API.Samples
                 Debug.LogError($"[ChatGPT_API.Samples] Connection is null.");
                 return;
             }
-            
+
             if (memory == null)
             {
                 Debug.LogError($"[ChatGPT_API.Samples] Memory is null.");
@@ -87,7 +87,7 @@ namespace Mochineko.ChatGPT_API.Samples
             try
             {
                 await UniTask.SwitchToThreadPool();
-                
+
                 // Receive enumerable from ChatGPT chat completion API.
                 var enumerable = await connection.CompleteChatAsStreamAsync(
                     message,
@@ -102,23 +102,20 @@ namespace Mochineko.ChatGPT_API.Samples
                         Debug.Log($"[ChatGPT_API.Samples] Role:{chunk.Choices[0].Delta.Role}.");
                         continue;
                     }
-                    
+
                     var delta = chunk.Choices[0].Delta.Content;
                     builder.Append(delta);
                     Debug.Log($"[ChatGPT_API.Samples] Delta:{delta}, Current:{builder}");
                 }
 
                 var result = builder.ToString();
-                
+
                 // Log chat completion result.
                 Debug.Log($"[ChatGPT_API.Samples] Completed: \n{result}");
-                
+
                 // Record result to memory.
-                await memory.AddMessageAsync(new Message(
-                    Role.Assistant,
-                    content: result,
-                    name: null,
-                    functionCall: null),
+                await memory.AddMessageAsync(Message.CreateAssistantMessage(
+                    content: result),
                     cancellationToken);
             }
             catch (Exception e)

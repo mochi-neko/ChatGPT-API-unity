@@ -48,7 +48,7 @@ namespace Mochineko.ChatGPT_API
             if (!string.IsNullOrEmpty(prompt))
             {
                 this.chatMemory.AddMessageAsync(
-                    new Message(Role.System, prompt),
+                    Message.CreateSystemMessage(prompt),
                     CancellationToken.None);
             }
 
@@ -106,7 +106,7 @@ namespace Mochineko.ChatGPT_API
 
             // Record user message
             await chatMemory.AddMessageAsync(
-                new Message(Role.User, content),
+                Message.CreateUserMessage(content),
                 cancellationToken);
 
             // Create request body
@@ -191,12 +191,12 @@ namespace Mochineko.ChatGPT_API
                 // Record assistant messages
                 foreach (var choice in responseBody.Choices)
                 {
-                    // NOTE: Fill message content with empty string because messages in request parameter must have content field. 
+                    // NOTE: Fill message content with empty string because messages in request parameter must have content field.
                     if (choice.Message.Content is null)
                     {
                         choice.Message.Content = string.Empty;
                     }
-                    
+
                     await chatMemory.AddMessageAsync(
                         choice.Message,
                         cancellationToken);
@@ -276,7 +276,7 @@ namespace Mochineko.ChatGPT_API
 
             // Record user message
             await chatMemory.AddMessageAsync(
-                new Message(Role.User, content),
+                Message.CreateUserMessage(content),
                 cancellationToken);
 
             // Create request body
@@ -389,7 +389,7 @@ namespace Mochineko.ChatGPT_API
                     {
                         Debug.Log($"[ChatGPT_API] Response delta : {line}");
                     }
-                    
+
                     if (string.IsNullOrEmpty(line) || string.IsNullOrWhiteSpace(line))
                     {
                         continue;
@@ -406,7 +406,7 @@ namespace Mochineko.ChatGPT_API
                     {
                         break;
                     }
-                    
+
                     var chunk = ChatCompletionStreamResponseChunk.FromJson(formatted);
                     if (chunk is null)
                     {
