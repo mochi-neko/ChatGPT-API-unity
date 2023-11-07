@@ -1,4 +1,6 @@
 #nullable enable
+using System;
+
 namespace Mochineko.ChatGPT_API
 {
     public enum Role : byte
@@ -18,6 +20,11 @@ namespace Mochineko.ChatGPT_API
         /// <summary>
         /// "function" that is generated message by function calling.
         /// </summary>
+        [Obsolete("Deprecated and replaced by tool")]
         Function,
+        /// <summary>
+        /// "tool" that is generated message by tools.
+        /// </summary>
+        Tool,
     }
 }
